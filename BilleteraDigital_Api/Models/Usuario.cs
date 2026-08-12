@@ -2,6 +2,7 @@
 
 namespace BilleteraDigital_Api.Models
 {
+    //Usuario
     public class Usuario
     {
         public int IdUsuario { get; set; }
