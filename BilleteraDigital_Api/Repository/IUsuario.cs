@@ -1,3 +1,4 @@
+using BilleteraDigital_Api.DTOs;
 using BilleteraDigital_Api.Models;
 
 namespace BilleteraDigital_Api.Repository
@@ -6,7 +7,7 @@ namespace BilleteraDigital_Api.Repository
     {
         IEnumerable<Usuario> GetUsuarios();
         Usuario GetUsuarioPorId(int id);
-        string Registrar(Usuario obj);
+        string Registrar(UsuarioRequest obj);
         string Editar(Usuario obj);
         string Eliminar(int id);
     }

@@ -2,12 +2,13 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using BilleteraDigital_Api.Models;
 using BilleteraDigital_Api.Repository;
+using BilleteraDigital_Api.DTOs;
 
 namespace BilleteraDigital_Api.Services
 {
     public class UsuarioService : IUsuario
     {
-        private readonly string _cadenaSql;
+        private readonly string? _cadenaSql;
 
         public UsuarioService(IConfiguration config)
         {
@@ -62,11 +63,11 @@ namespace BilleteraDigital_Api.Services
                     {
                         obj = new Usuario
                         {
-                            IdUsuario = Convert.ToInt32(dr["IdUsuario"]),
-                            Nombre = dr["Nombre"].ToString(),
-                            Apellido = dr["Apellido"].ToString(),
-                            Correo = dr["Correo"].ToString(),
-                            Telefono = dr["Telefono"] != DBNull.Value ? dr["Telefono"].ToString() : null,
+                            IdUsuario = dr.GetInt32(0),
+                            Nombre = dr.GetString(1),
+                            Apellido = dr.GetString(2),
+                            Correo = dr.GetString(3),
+                            Telefono = dr.GetString(4),
                             Estado = Convert.ToBoolean(dr["Estado"]),
                             FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"])
                         };
@@ -76,7 +77,7 @@ namespace BilleteraDigital_Api.Services
             return obj;
         }
 
-        public string Registrar(Usuario obj)
+        public string Registrar(UsuarioRequest obj)
         {
             string mensaje = "";
             try

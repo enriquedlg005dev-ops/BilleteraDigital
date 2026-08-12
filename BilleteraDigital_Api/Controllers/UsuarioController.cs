@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using BilleteraDigital_Api.Models;
 using BilleteraDigital_Api.Repository;
+using BilleteraDigital_Api.DTOs;
 
 namespace BilleteraDigital_Api.Controllers
 {
@@ -35,7 +36,7 @@ namespace BilleteraDigital_Api.Controllers
         }
 
         [HttpPost("Registrar")]
-        public IActionResult Registrar([FromBody] Usuario obj)
+        public IActionResult Registrar([FromBody] UsuarioRequest obj)
         {
             var mensaje = _usuarioService.Registrar(obj);
             return Ok(new { mensaje });
