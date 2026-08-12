@@ -9,10 +9,8 @@ namespace BilleteraDigital_Api.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
-        // Declaración de la interfaz para la inyección de dependencias
         private readonly IUsuario _usuarioService;
 
-        // Constructor que inyecta el servicio
         public UsuarioController(IUsuario usuarioService)
         {
             _usuarioService = usuarioService;
@@ -36,14 +34,14 @@ namespace BilleteraDigital_Api.Controllers
         }
 
         [HttpPost("Registrar")]
-        public IActionResult Registrar([FromBody] UsuarioRequest obj)
+        public IActionResult Registrar([FromBody] UsuarioRequestRegistrar obj)
         {
             var mensaje = _usuarioService.Registrar(obj);
             return Ok(new { mensaje });
         }
 
         [HttpPut("Editar")]
-        public IActionResult Editar([FromBody] Usuario obj)
+        public IActionResult Editar([FromBody] UsuarioRequestActualizar obj)
         {
             var mensaje = _usuarioService.Editar(obj);
             return Ok(new { mensaje });

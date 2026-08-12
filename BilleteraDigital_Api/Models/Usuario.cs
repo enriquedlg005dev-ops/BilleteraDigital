@@ -13,8 +13,6 @@ namespace BilleteraDigital_Api.Models
 
         public string Correo { get; set; } = string.Empty;
 
-        public string Contrasena { get; set; } = string.Empty;
-
         public string? Telefono { get; set; }
 
         public bool Estado { get; set; }

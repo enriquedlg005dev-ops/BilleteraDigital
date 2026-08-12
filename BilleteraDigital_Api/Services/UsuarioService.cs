@@ -12,7 +12,6 @@ namespace BilleteraDigital_Api.Services
 
         public UsuarioService(IConfiguration config)
         {
-            // Asegúrate de que el nombre coincida con tu appsettings.json
             _cadenaSql = config.GetConnectionString("DefaultConnection"); 
         }
 
@@ -32,12 +31,12 @@ namespace BilleteraDigital_Api.Services
                     {
                         lista.Add(new Usuario
                         {
-                            IdUsuario = Convert.ToInt32(dr["IdUsuario"]),
-                            Nombre = dr["Nombre"].ToString(),
-                            Apellido = dr["Apellido"].ToString(),
-                            Correo = dr["Correo"].ToString(),
-                            Telefono = dr["Telefono"] != DBNull.Value ? dr["Telefono"].ToString() : null,
-                            Estado = Convert.ToBoolean(dr["Estado"]),
+                            IdUsuario = dr.GetInt32(0),
+                            Nombre = dr.GetString(1),
+                            Apellido = dr.GetString(2),
+                            Correo = dr.GetString(3),
+                            Telefono = dr.GetString(4),
+                            Estado = dr.GetBoolean(5),
                             FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"])
                         });
                     }
@@ -68,7 +67,7 @@ namespace BilleteraDigital_Api.Services
                             Apellido = dr.GetString(2),
                             Correo = dr.GetString(3),
                             Telefono = dr.GetString(4),
-                            Estado = Convert.ToBoolean(dr["Estado"]),
+                            Estado = dr.GetBoolean(5),
                             FechaRegistro = Convert.ToDateTime(dr["FechaRegistro"])
                         };
                     }
@@ -77,7 +76,7 @@ namespace BilleteraDigital_Api.Services
             return obj;
         }
 
-        public string Registrar(UsuarioRequest obj)
+        public string Registrar(UsuarioRequestRegistrar obj)
         {
             string mensaje = "";
             try
@@ -92,9 +91,7 @@ namespace BilleteraDigital_Api.Services
                     cmd.Parameters.AddWithValue("@Apellido", obj.Apellido);
                     cmd.Parameters.AddWithValue("@Correo", obj.Correo);
                     cmd.Parameters.AddWithValue("@Contrasena", obj.Contrasena);
-                    cmd.Parameters.AddWithValue("@Telefono", string.IsNullOrEmpty(obj.Telefono) ? DBNull.Value : obj.Telefono);
-
-                    // El procedimiento devuelve un SCOPE_IDENTITY()
+                    cmd.Parameters.AddWithValue("@Telefono", obj.Telefono);
                     object result = cmd.ExecuteScalar(); 
                     mensaje = $"Usuario registrado correctamente con ID: {result}";
                 }
@@ -106,7 +103,7 @@ namespace BilleteraDigital_Api.Services
             return mensaje;
         }
 
-        public string Editar(Usuario obj)
+        public string Editar(UsuarioRequestActualizar obj)
         {
             string mensaje = "";
             try
@@ -121,9 +118,7 @@ namespace BilleteraDigital_Api.Services
                     cmd.Parameters.AddWithValue("@Nombre", obj.Nombre);
                     cmd.Parameters.AddWithValue("@Apellido", obj.Apellido);
                     cmd.Parameters.AddWithValue("@Correo", obj.Correo);
-                    cmd.Parameters.AddWithValue("@Telefono", string.IsNullOrEmpty(obj.Telefono) ? DBNull.Value : obj.Telefono);
-
-                    // Leemos el mensaje devuelto por el procedimiento almacenado
+                    cmd.Parameters.AddWithValue("@Telefono", obj.Telefono);
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
                         if (dr.Read())

@@ -7,8 +7,8 @@ namespace BilleteraDigital_Api.Repository
     {
         IEnumerable<Usuario> GetUsuarios();
         Usuario GetUsuarioPorId(int id);
-        string Registrar(UsuarioRequest obj);
-        string Editar(Usuario obj);
+        string Registrar(UsuarioRequestRegistrar obj);
+        string Editar(UsuarioRequestActualizar obj);
         string Eliminar(int id);
     }
 }
