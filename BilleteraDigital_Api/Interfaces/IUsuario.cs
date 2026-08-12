@@ -1,6 +1,6 @@
 using BilleteraDigital_Api.Models;
 
-namespace BilleteraDigital_Api.Repository
+namespace BilleteraDigital_Api.Interfaces
 {
     public interface IUsuario
     {

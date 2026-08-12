@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using BilleteraDigital_Api.Models;
-using BilleteraDigital_Api.Repository;
+using BilleteraDigital_Api.Interfaces;
 
 namespace BilleteraDigital_Api.Controllers
 {

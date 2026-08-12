@@ -1,7 +1,7 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 using BilleteraDigital_Api.Models;
-using BilleteraDigital_Api.Repository;
+using BilleteraDigital_Api.Interfaces;
 
 namespace BilleteraDigital_Api.Services
 {

@@ -1,4 +1,4 @@
-using BilleteraDigital_Api.Repository;
+using BilleteraDigital_Api.Interfaces;
 using BilleteraDigital_Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
