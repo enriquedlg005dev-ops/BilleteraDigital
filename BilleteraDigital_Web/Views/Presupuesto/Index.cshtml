@@ -1,0 +1,52 @@
+﻿@model IEnumerable<BilleteraDigital_Web.Models.PresupuestoModel>
+
+@{
+    ViewData["Title"] = "Gestión de Presupuestos";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Listado de Presupuestos</h2>
+        <a asp-action="Crear" class="btn btn-primary">Nuevo Presupuesto</a>
+    </div>
+
+    <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Categoría</th>
+                <th>Monto Límite</th>
+                <th>Monto Gastado</th>
+                <th>Disponible</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                decimal porcentaje = item.MontoLimite > 0 ? (item.MontoGastado / item.MontoLimite) * 100 : 0;
+                string estadoColor = porcentaje >= 100 ? "bg-danger" : porcentaje >= 80 ? "bg-warning text-dark" : "bg-success";
+
+                <tr>
+                    <td>@item.Categoria</td>
+                    <td>S/ @item.MontoLimite.ToString("N2")</td>
+                    <td>S/ @item.MontoGastado.ToString("N2")</td>
+                    <td>
+                        <span class="badge @estadoColor">
+                            S/ @item.MontoDisponible.ToString("N2")
+                        </span>
+                    </td>
+                    <td>@item.FechaInicio.ToString("dd/MM/yyyy")</td>
+                    <td>@item.FechaFin.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <a asp-action="Editar" asp-route-id="@item.IdPresupuesto" class="btn btn-sm btn-warning">Editar</a>
+                        <form asp-action="Eliminar" asp-route-id="@item.IdPresupuesto" method="post" class="d-inline" onsubmit="return confirm('¿Seguro que deseas eliminar este presupuesto?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
