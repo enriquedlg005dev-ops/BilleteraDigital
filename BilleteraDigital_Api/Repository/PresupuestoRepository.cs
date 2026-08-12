@@ -158,5 +158,10 @@ namespace BilleteraDigital_Api.Repository
             }
             return resumen;
         }
+
+        public DashboardResumenDto ObtenerDashboard(int idUsuario)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
