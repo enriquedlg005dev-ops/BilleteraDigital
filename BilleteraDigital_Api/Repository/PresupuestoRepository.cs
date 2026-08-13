@@ -1,167 +1,52 @@
-﻿using System.Data;
-using Microsoft.Data.SqlClient;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using BilleteraDigital_Api.Models;
 
 namespace BilleteraDigital_Api.Repository
 {
     public class PresupuestoRepository : IPresupuestoRepository
     {
-        private readonly string _cadenaSQL;
-
-        public PresupuestoRepository(IConfiguration configuration)
+        // Simulación de datos en memoria para pruebas
+        private static List<Presupuesto> _lista = new List<Presupuesto>
         {
-            _cadenaSQL = configuration.GetConnectionString("conexion")!;
+            new Presupuesto
+            {
+                IdPresupuesto = 1, IdUsuario = 1, IdCategoria = 1,
+                MontoLimite = 560.00m, MontoGastado = 35.00m,
+                FechaInicio = new DateTime(2026, 7, 1), FechaFin = new DateTime(2026, 7, 31),
+                Estado = true, FechaRegistro = DateTime.Now
+            },
+            new Presupuesto
+            {
+                IdPresupuesto = 2, IdUsuario = 1, IdCategoria = 2,
+                MontoLimite = 4000.00m, MontoGastado = 3560.00m,
+                FechaInicio = new DateTime(2026, 6, 1), FechaFin = new DateTime(2026, 6, 30),
+                Estado = true, FechaRegistro = DateTime.Now
+            }
+        };
+
+        public IEnumerable<Presupuesto> ObtenerPorUsuario(int idUsuario)
+        {
+            return _lista.Where(p => p.IdUsuario == idUsuario && p.Estado);
         }
 
-        public List<PresupuestoDto> ListarPorUsuario(int idUsuario)
+        public int Agregar(Presupuesto presupuesto)
         {
-            var lista = new List<PresupuestoDto>();
-
-            using (SqlConnection cn = new SqlConnection(_cadenaSQL))
-            {
-                SqlCommand cmd = new SqlCommand("sp_Presupuesto_Listar", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@IdUsuario", idUsuario);
-
-                cn.Open();
-                using (SqlDataReader dr = cmd.ExecuteReader())
-                {
-                    while (dr.Read())
-                    {
-                        lista.Add(new PresupuestoDto
-                        {
-                            IdPresupuesto = Convert.ToInt32(dr["IdPresupuesto"]),
-                            IdUsuario = Convert.ToInt32(dr["IdUsuario"]),
-                            Usuario = dr["Usuario"].ToString(),
-                            IdCategoria = Convert.ToInt32(dr["IdCategoria"]),
-                            Categoria = dr["Categoria"].ToString(),
-                            MontoLimite = Convert.ToDecimal(dr["MontoLimite"]),
-                            MontoGastado = Convert.ToDecimal(dr["MontoGastado"]),
-                            MontoDisponible = Convert.ToDecimal(dr["MontoDisponible"]),
-                            FechaInicio = Convert.ToDateTime(dr["FechaInicio"]),
-                            FechaFin = Convert.ToDateTime(dr["FechaFin"]),
-                            Estado = Convert.ToBoolean(dr["Estado"])
-                        });
-                    }
-                }
-            }
-            return lista;
-        }
-
-        public PresupuestoDto ObtenerPorId(int idPresupuesto)
-        {
-            var presupuesto = new PresupuestoDto();
-
-            using (SqlConnection cn = new SqlConnection(_cadenaSQL))
-            {
-                SqlCommand cmd = new SqlCommand("sp_Presupuesto_ObtenerPorId", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@IdPresupuesto", idPresupuesto);
-
-                cn.Open();
-                using (SqlDataReader dr = cmd.ExecuteReader())
-                {
-                    if (dr.Read())
-                    {
-                        presupuesto.IdPresupuesto = Convert.ToInt32(dr["IdPresupuesto"]);
-                        presupuesto.IdUsuario = Convert.ToInt32(dr["IdUsuario"]);
-                        presupuesto.IdCategoria = Convert.ToInt32(dr["IdCategoria"]);
-                        presupuesto.MontoLimite = Convert.ToDecimal(dr["MontoLimite"]);
-                        presupuesto.MontoGastado = Convert.ToDecimal(dr["MontoGastado"]);
-                        presupuesto.FechaInicio = Convert.ToDateTime(dr["FechaInicio"]);
-                        presupuesto.FechaFin = Convert.ToDateTime(dr["FechaFin"]);
-                        presupuesto.Estado = Convert.ToBoolean(dr["Estado"]);
-                    }
-                }
-            }
-            return presupuesto;
-        }
-
-        public bool Registrar(PresupuestoDto dto)
-        {
-            using (SqlConnection cn = new SqlConnection(_cadenaSQL))
-            {
-                SqlCommand cmd = new SqlCommand("sp_Presupuesto_Registrar", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@IdUsuario", dto.IdUsuario);
-                cmd.Parameters.AddWithValue("@IdCategoria", dto.IdCategoria);
-                cmd.Parameters.AddWithValue("@MontoLimite", dto.MontoLimite);
-                cmd.Parameters.AddWithValue("@FechaInicio", dto.FechaInicio);
-                cmd.Parameters.AddWithValue("@FechaFin", dto.FechaFin);
-
-                cn.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
-        }
-
-        public bool Editar(PresupuestoDto dto)
-        {
-            using (SqlConnection cn = new SqlConnection(_cadenaSQL))
-            {
-                SqlCommand cmd = new SqlCommand("sp_Presupuesto_Editar", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@IdPresupuesto", dto.IdPresupuesto);
-                cmd.Parameters.AddWithValue("@IdCategoria", dto.IdCategoria);
-                cmd.Parameters.AddWithValue("@MontoLimite", dto.MontoLimite);
-                cmd.Parameters.AddWithValue("@FechaInicio", dto.FechaInicio);
-                cmd.Parameters.AddWithValue("@FechaFin", dto.FechaFin);
-
-                cn.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
+            presupuesto.IdPresupuesto = _lista.Count + 1;
+            presupuesto.Estado = true;
+            presupuesto.FechaRegistro = DateTime.Now;
+            _lista.Add(presupuesto);
+            return presupuesto.IdPresupuesto;
         }
 
         public bool EliminarLogico(int idPresupuesto)
         {
-            using (SqlConnection cn = new SqlConnection(_cadenaSQL))
-            {
-                SqlCommand cmd = new SqlCommand("sp_Presupuesto_Eliminar", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@IdPresupuesto", idPresupuesto);
+            var item = _lista.FirstOrDefault(p => p.IdPresupuesto == idPresupuesto);
+            if (item == null) return false;
 
-                cn.Open();
-                return cmd.ExecuteNonQuery() > 0;
-            }
-        }
-
-        public DashboardResumenDto ObtenerResumenDashboard(int idUsuario)
-        {
-            var resumen = new DashboardResumenDto();
-
-            using (SqlConnection cn = new SqlConnection(_cadenaSQL))
-            {
-                SqlCommand cmd = new SqlCommand(@"
-                    SELECT 
-                        ISNULL((SELECT SUM(Monto) FROM Movimiento M 
-                                INNER JOIN TipoMovimiento TM ON M.IdTipoMovimiento = TM.IdTipoMovimiento 
-                                WHERE M.IdUsuario = @IdUsuario AND TM.Nombre = 'Ingreso' AND M.Estado = 1), 0) AS TotalIngresos,
-                        
-                        ISNULL((SELECT SUM(Monto) FROM Movimiento M 
-                                INNER JOIN TipoMovimiento TM ON M.IdTipoMovimiento = TM.IdTipoMovimiento 
-                                WHERE M.IdUsuario = @IdUsuario AND TM.Nombre = 'Gasto' AND M.Estado = 1), 0) AS TotalGastos,
-                        
-                        (SELECT COUNT(1) FROM Presupuesto WHERE IdUsuario = @IdUsuario AND Estado = 1) AS CantidadPresupuestosActivos", cn);
-
-                cmd.Parameters.AddWithValue("@IdUsuario", idUsuario);
-                cn.Open();
-
-                using (SqlDataReader dr = cmd.ExecuteReader())
-                {
-                    if (dr.Read())
-                    {
-                        resumen.TotalIngresos = Convert.ToDecimal(dr["TotalIngresos"]);
-                        resumen.TotalGastos = Convert.ToDecimal(dr["TotalGastos"]);
-                        resumen.SaldoTotal = resumen.TotalIngresos - resumen.TotalGastos;
-                        resumen.CantidadPresupuestosActivos = Convert.ToInt32(dr["CantidadPresupuestosActivos"]);
-                    }
-                }
-            }
-            return resumen;
-        }
-
-        public DashboardResumenDto ObtenerDashboard(int idUsuario)
-        {
-            throw new NotImplementedException();
+            item.Estado = false;
+            return true;
         }
     }
 }

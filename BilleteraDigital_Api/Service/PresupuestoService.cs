@@ -1,22 +1,31 @@
-﻿using BilleteraDigital_Api.Models;
+﻿using System.Collections.Generic;
+using BilleteraDigital_Api.Models;
 using BilleteraDigital_Api.Repository;
 
 namespace BilleteraDigital_Api.Service
 {
     public class PresupuestoService : IPresupuestoService
     {
-        private readonly IPresupuestoRepository _repo;
+        private readonly IPresupuestoRepository _repository;
 
-        public PresupuestoService(IPresupuestoRepository repo)
+        public PresupuestoService(IPresupuestoRepository repository)
         {
-            _repo = repo;
+            _repository = repository;
         }
 
-        public List<PresupuestoDto> ListarPorUsuario(int idUsuario) => _repo.ListarPorUsuario(idUsuario);
-        public PresupuestoDto ObtenerPorId(int idPresupuesto) => _repo.ObtenerPorId(idPresupuesto);
-        public bool Registrar(PresupuestoDto p) => _repo.Registrar(p);
-        public bool Editar(PresupuestoDto p) => _repo.Editar(p);
-        public bool EliminarLogico(int idPresupuesto) => _repo.EliminarLogico(idPresupuesto);
-        public DashboardResumenDto ObtenerDashboard(int idUsuario) => _repo.ObtenerDashboard(idUsuario);
+        public IEnumerable<Presupuesto> ObtenerPorUsuario(int idUsuario)
+        {
+            return _repository.ObtenerPorUsuario(idUsuario);
+        }
+
+        public int Registrar(Presupuesto presupuesto)
+        {
+            return _repository.Agregar(presupuesto);
+        }
+
+        public bool Desactivar(int idPresupuesto)
+        {
+            return _repository.EliminarLogico(idPresupuesto);
+        }
     }
 }
