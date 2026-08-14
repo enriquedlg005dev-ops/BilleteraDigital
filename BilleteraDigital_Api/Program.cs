@@ -1,9 +1,11 @@
+using BilleteraDigital_Api.Interfaces;
+using BilleteraDigital_Api.Service;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Configuración de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("PermitirWeb", policy =>
@@ -18,8 +20,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<BilleteraDigital_Api.Repository.IPresupuestoRepository, BilleteraDigital_Api.Repository.PresupuestoRepository>();
-builder.Services.AddScoped<BilleteraDigital_Api.Service.IPresupuestoService, BilleteraDigital_Api.Service.PresupuestoService>();
+
+builder.Services.AddScoped<IPresupuestoService, PresupuestoService>();
 
 var app = builder.Build();
 
