@@ -2,7 +2,7 @@
 using Microsoft.Data.SqlClient;
 using BilleteraDigital_Api.Interfaces;
 using BilleteraDigital_Api.Models;
-using BilleteraDigital_Api.ModelsDtoRequest;
+using BilleteraDigital_Api.DTOs;
 
 namespace Asp_Web_Api_.Services
 {
