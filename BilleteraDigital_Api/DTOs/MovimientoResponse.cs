@@ -1,4 +1,4 @@
-namespace BilleteraDigital_Api.ModelsDtoRequest
+namespace BilleteraDigital_Api.DTOs
 {
     public class MovimientoResponse
     {
