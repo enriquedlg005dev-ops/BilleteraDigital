@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
-using BilleteraDigital_Api.Models;
+using BilleteraDigital_Api.DTOs;
 using BilleteraDigital_Api.Interfaces;
+using BilleteraDigital_Api.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BilleteraDigital_Api.Controllers
 {
@@ -8,10 +9,8 @@ namespace BilleteraDigital_Api.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
-        // Declaración de la interfaz para la inyección de dependencias
         private readonly IUsuario _usuarioService;
 
-        // Constructor que inyecta el servicio
         public UsuarioController(IUsuario usuarioService)
         {
             _usuarioService = usuarioService;
@@ -28,21 +27,21 @@ namespace BilleteraDigital_Api.Controllers
         public IActionResult GetUsuarioPorId(int id)
         {
             var usuario = _usuarioService.GetUsuarioPorId(id);
-            if (usuario == null) 
+            if (usuario == null)
                 return NotFound(new { mensaje = "Usuario no encontrado" });
-                
+
             return Ok(usuario);
         }
 
         [HttpPost("Registrar")]
-        public IActionResult Registrar([FromBody] Usuario obj)
+        public IActionResult Registrar([FromBody] UsuarioRequestRegistrar obj)
         {
             var mensaje = _usuarioService.Registrar(obj);
             return Ok(new { mensaje });
         }
 
         [HttpPut("Editar")]
-        public IActionResult Editar([FromBody] Usuario obj)
+        public IActionResult Editar([FromBody] UsuarioRequestActualizar obj)
         {
             var mensaje = _usuarioService.Editar(obj);
             return Ok(new { mensaje });
@@ -53,6 +52,19 @@ namespace BilleteraDigital_Api.Controllers
         {
             var mensaje = _usuarioService.Eliminar(id);
             return Ok(new { mensaje });
+        }
+
+        [HttpPost("Login")]
+        public IActionResult Login([FromBody] UsuarioRequestLogin obj)
+        {
+            var usuario = _usuarioService.Login(obj);
+
+            if (usuario == null)
+            {
+                return Unauthorized(new { mensaje = "Correo o contraseña incorrectos" });
+            }
+
+            return Ok(usuario);
         }
     }
 }
