@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿@model BilleteraDigital.MVC.Models.MovimientoRequest
 @{
     ViewData["Title"] = "Editar Movimiento";
@@ -233,3 +234,64 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+=======
+﻿@model BilleteraDigital_Web.Models.MovimientoRequest
+@{
+    ViewData["Title"] = "Editar Movimiento";
+}
+<h1>Editar Movimiento</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" asp-route-idMovimiento="@ViewBag.IdMovimiento">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="IdUsuario" class="control-label"></label>
+                <input asp-for="IdUsuario" class="form-control" />
+                <span asp-validation-for="IdUsuario" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IdCategoria" class="control-label"></label>
+                <select asp-for="IdCategoria" class="form-control" asp-items="ViewBag.categorias">
+                    <option value="">-- Seleccione una categoria --</option>
+                </select>
+                <span asp-validation-for="IdCategoria" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IdTipoMovimiento" class="control-label"></label>
+                <select asp-for="IdTipoMovimiento" class="form-control">
+                    <option value="1">Ingreso</option>
+                    <option value="2">Gasto</option>
+                </select>
+                <span asp-validation-for="IdTipoMovimiento" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Monto" class="control-label"></label>
+                <input asp-for="Monto" class="form-control" />
+                <span asp-validation-for="Monto" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Descripcion" class="control-label"></label>
+                <input asp-for="Descripcion" class="form-control" />
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}---
+>>>>>>> 09999fa6b5a2f0aca78f4a59f2fb96b16500bddc

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿@model BilleteraDigital.MVC.Models.CategoriaRequest
 @{
     ViewData["Title"] = "Editar Categoría";
@@ -70,4 +71,65 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+=======
+﻿@model BilleteraDigital_Web.Models.CategoriaRequest
+@{
+    ViewData["Title"] = "Editar Categoría";
+}
+
+<div class="container-fluid py-4" style="background-color: #f4f6f9; min-height: 100vh;">
+    <div class="container">
+
+        <div class="mb-4">
+            <h2 class="fw-bold mb-1">Editar Categoría</h2>
+            <p class="text-muted mb-0">Actualiza los datos de la categoría</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <form asp-action="Edit" asp-route-idCategoria="@ViewBag.IdCategoria">
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="IdUsuario" class="form-label fw-semibold"></label>
+                                <input asp-for="IdUsuario" class="form-control" />
+                                <span asp-validation-for="IdUsuario" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="Nombre" class="form-label fw-semibold"></label>
+                                <input asp-for="Nombre" class="form-control" />
+                                <span asp-validation-for="Nombre" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <label asp-for="Descripcion" class="form-label fw-semibold"></label>
+                                <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Descripcion" class="text-danger"></span>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                                    <i class="bi bi-arrow-left"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary rounded-pill px-4">
+                                    <i class="bi bi-check-circle"></i> Guardar cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+>>>>>>> 09999fa6b5a2f0aca78f4a59f2fb96b16500bddc
 }
