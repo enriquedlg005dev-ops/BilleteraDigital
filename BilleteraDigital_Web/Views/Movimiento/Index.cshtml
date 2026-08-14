@@ -1,0 +1,247 @@
+﻿@model IEnumerable<BilleteraDigital.MVC.Models.MovimientoResponse>
+@{
+    ViewData["Title"] = "Movimientos";
+}
+
+<style>
+    .bd-page-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #1a2140;
+        margin-bottom: .2rem;
+    }
+
+    .bd-page-subtitle {
+        color: #9099b5;
+        font-size: .92rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .bd-card {
+        border: none;
+        border-radius: 14px;
+        box-shadow: 0 2px 10px rgba(19,26,46,.06);
+    }
+
+    .bd-form-group {
+        margin-bottom: 1.1rem;
+    }
+
+        .bd-form-group label {
+            font-weight: 600;
+            font-size: .85rem;
+            color: #4a5175;
+            margin-bottom: .35rem;
+            display: block;
+        }
+
+        .bd-form-group .form-control, .bd-form-group .form-select {
+            border-radius: 8px;
+            border: 1px solid #dde1ec;
+            padding: .55rem .75rem;
+        }
+
+            .bd-form-group .form-control:focus, .bd-form-group .form-select:focus {
+                border-color: #3d5af1;
+                box-shadow: 0 0 0 3px rgba(61,90,241,.12);
+            }
+
+    .bd-btn-primary {
+        background-color: #3d5af1;
+        border-color: #3d5af1;
+        font-weight: 500;
+    }
+
+        .bd-btn-primary:hover {
+            background-color: #2f47d1;
+            border-color: #2f47d1;
+            color: #fff;
+        }
+
+    .bd-table thead th {
+        background-color: #f7f8fc;
+        color: #6b7290;
+        font-size: .78rem;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        font-weight: 600;
+        border-bottom: none;
+        padding: .9rem 1rem;
+    }
+
+    .bd-table tbody td {
+        padding: .85rem 1rem;
+        vertical-align: middle;
+        border-color: #eef0f6;
+    }
+
+    .bd-badge-ingreso {
+        background-color: #e4f7ec;
+        color: #1a9d5c;
+        font-weight: 500;
+        padding: .35em .7em;
+    }
+
+    .bd-badge-gasto {
+        background-color: #fde8e8;
+        color: #d94848;
+        font-weight: 500;
+        padding: .35em .7em;
+    }
+
+    .bd-badge-activo {
+        background-color: #e4f7ec;
+        color: #1a9d5c;
+    }
+
+    .bd-badge-inactivo {
+        background-color: #eceef3;
+        color: #6b7290;
+    }
+
+    .bd-search-input {
+        border-radius: 8px;
+        border: 1px solid #dde1ec;
+        padding: .5rem .8rem;
+        font-size: .88rem;
+    }
+</style>
+
+<div class="bd-page-title">Movimientos</div>
+<div class="bd-page-subtitle">Registra, consulta y administra tus ingresos y gastos.</div>
+
+@if (TempData["message"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        @TempData["message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- FORMULARIO: Nuevo movimiento -->
+<div class="card bd-card mb-4">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-3" style="color:#1a2140;">Nuevo movimiento</h5>
+
+        <form asp-controller="Movimiento" asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <input type="hidden" name="IdUsuario" value="1" />
+
+            <div class="row">
+                <div class="col-md-12 bd-form-group">
+                    <label>Descripción</label>
+                    <input name="Descripcion" class="form-control" placeholder="Ejemplo: Compra de alimentos" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 bd-form-group">
+                    <label>Monto</label>
+                    <input name="Monto" type="number" step="0.01" class="form-control" placeholder="0.00" />
+                </div>
+                <div class="col-md-4 bd-form-group">
+                    <label>Tipo</label>
+                    <select name="IdTipoMovimiento" class="form-select">
+                        <option value="">-- Seleccione --</option>
+                        <option value="1">Ingreso</option>
+                        <option value="2">Gasto</option>
+                        <option value="3">Transferencia</option>
+                    </select>
+                </div>
+                <div class="col-md-4 bd-form-group">
+                    <label>Categoría</label>
+                    <select name="IdCategoria" class="form-select" asp-items="ViewBag.categorias">
+                        <option value="">-- Seleccione --</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn bd-btn-primary text-white px-4 mt-2">
+                <i class="bi bi-plus-lg"></i> Guardar movimiento
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- LISTADO: Movimientos -->
+<div class="card bd-card">
+    <div class="card-body p-4 pb-0">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h5 class="fw-bold mb-0" style="color:#1a2140;">Listado de movimientos</h5>
+                <small class="text-muted">Total registrados: @Model.Count()</small>
+            </div>
+            <input type="text" id="bdBuscarMovimiento" class="bd-search-input" style="width:280px;"
+                   placeholder="Buscar por descripción, categoría o tipo..." />
+        </div>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover bd-table align-middle mb-0" id="bdTablaMovimientos">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Tipo</th>
+                        <th>Fecha</th>
+                        <th class="text-end">Monto</th>
+                        <th class="text-center">Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Descripcion</td>
+                            <td>@item.NombreCategoria</td>
+                            <td>
+                                <span class="badge @(item.IdTipoMovimiento == 1 ? "bd-badge-ingreso" : "bd-badge-gasto")">
+                                    @item.NombreTipoMovimiento
+                                </span>
+                            </td>
+                            <td>@item.FechaMovimiento.ToString("dd/MM/yyyy")</td>
+                            <td class="text-end fw-semibold @(item.IdTipoMovimiento == 1 ? "text-success" : "text-danger")">
+                                @(item.IdTipoMovimiento == 1 ? "+" : "-") @item.Monto.ToString("C")
+                            </td>
+                            <td class="text-center">
+                                @if (item.Estado)
+                                {
+                                    <span class="badge bd-badge-activo">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bd-badge-inactivo">Inactivo</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <a asp-action="Edit" asp-route-idMovimiento="@item.IdMovimiento" class="btn btn-sm btn-outline-primary">Editar</a>
+                                <a asp-action="Delete" asp-route-idMovimiento="@item.IdMovimiento" class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('¿Seguro que deseas eliminar este movimiento?');">Eliminar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center text-muted py-5">No hay movimientos registrados todavía.</div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('bdBuscarMovimiento').addEventListener('input', function () {
+            const filtro = this.value.toLowerCase();
+            document.querySelectorAll('#bdTablaMovimientos tbody tr').forEach(function (fila) {
+                const texto = fila.textContent.toLowerCase();
+                fila.style.display = texto.includes(filtro) ? '' : 'none';
+            });
+        });
+    </script>
+}
