@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-﻿@model IEnumerable<BilleteraDigital.MVC.Models.MovimientoResponse>
+@model IEnumerable<BilleteraDigital_Web.Models.MovimientoResponse>
 @{
     ViewData["Title"] = "Movimientos";
 }
@@ -119,7 +118,7 @@
     </div>
 }
 
-<!-- FORMULARIO: Nuevo movimiento -->
+
 <div class="card bd-card mb-4">
     <div class="card-body p-4">
         <h5 class="fw-bold mb-3" style="color:#1a2140;">Nuevo movimiento</h5>
@@ -165,7 +164,7 @@
     </div>
 </div>
 
-<!-- LISTADO: Movimientos -->
+
 <div class="card bd-card">
     <div class="card-body p-4 pb-0">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -245,92 +244,4 @@
             });
         });
     </script>
-=======
-﻿@model IEnumerable<BilleteraDigital_Web.Models.MovimientoResponse>
-@{
-    ViewData["Title"] = "Movimientos";
-}
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="mb-0">Movimientos</h1>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-plus-lg"></i> Nuevo Movimiento
-    </a>
-</div>
-
-@if (TempData["message"] != null)
-{
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
-        @TempData["message"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
-
-<div class="card shadow-sm">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Categoría</th>
-                        <th>Tipo</th>
-                        <th class="text-end">Monto</th>
-                        <th>Descripción</th>
-                        <th>Fecha</th>
-                        <th class="text-center">Estado</th>
-                        <th class="text-end">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.NombreUsuario</td>
-                            <td>@item.NombreCategoria</td>
-                            <td>
-                                <span class="badge @(item.IdTipoMovimiento == 1 ? "bg-success" : "bg-danger")">
-                                    @item.NombreTipoMovimiento
-                                </span>
-                            </td>
-                            <td class="text-end fw-semibold">
-                                @item.Monto.ToString("C")
-                            </td>
-                            <td>@item.Descripcion</td>
-                            <td>@item.FechaMovimiento.ToString("dd/MM/yyyy")</td>
-                            <td class="text-center">
-                                @if (item.Estado)
-                                {
-                                    <span class="badge bg-success">Activo</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">Inactivo</span>
-                                }
-                            </td>
-                            <td class="text-end">
-                                <a asp-action="Edit" asp-route-idMovimiento="@item.IdMovimiento"
-                                   class="btn btn-sm btn-outline-primary">
-                                    Editar
-                                </a>
-                                <a asp-action="Delete" asp-route-idMovimiento="@item.IdMovimiento"
-                                   class="btn btn-sm btn-outline-danger"
-                                   onclick="return confirm('¿Seguro que deseas eliminar este movimiento?');">
-                                    Eliminar
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-@if (!Model.Any())
-{
-    <div class="text-center text-muted py-5">
-        No hay movimientos registrados todavía.
-    </div>
->>>>>>> 09999fa6b5a2f0aca78f4a59f2fb96b16500bddc
 }

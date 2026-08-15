@@ -10,6 +10,8 @@ builder.Services.AddSwaggerGen();
 
 // Aquí registramos la Inyección de Dependencias
 builder.Services.AddScoped<IUsuario, UsuarioService>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+builder.Services.AddScoped<IMovimientoService, MovimientoService>();
 
 var app = builder.Build();
 
