@@ -2,22 +2,30 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 1. ZONA DE SERVICIOS (ANTES DEL BUILD) ---
+// --- 1. ZONA DE SERVICIOS ---
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddHttpClient();
+
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Auth/Login"; // Si alguien intenta entrar sin sesión, lo manda aquí
-        options.ExpireTimeSpan = TimeSpan.FromHours(2); // La sesión dura 2 horas
+        options.LoginPath = "/Auth/Login";
+        options.ExpireTimeSpan = TimeSpan.FromHours(2);
     });
 
-// ¡La construcción de la app va justo después de registrar los servicios!
 var app = builder.Build();
 
-
-// --- 2. ZONA DE MIDDLEWARES (DESPUÉS DEL BUILD) ---
+// --- 2. ZONA DE MIDDLEWARES ---
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -29,7 +37,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// El orden estricto de seguridad:
+app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -1,0 +1,218 @@
+﻿@model BilleteraDigital_Web.Models.PresupuestoViewModel
+@{
+    ViewData["Title"] = "Presupuestos";
+}
+
+<!-- CDN de SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid p-4">
+    <h2 class="fw-bold">Presupuestos</h2>
+    <p class="text-muted">Controla cuánto planeas gastar por categoría y mes.</p>
+
+    <!-- 1. Tarjetas de Resumen Superior -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card p-3 border-0 shadow-sm rounded-3">
+                <small class="text-muted">Total presupuestado</small>
+                <h3 class="fw-bold mb-0">S/ @Model.TotalPresupuestado.ToString("N2")</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 border-0 shadow-sm rounded-3">
+                <small class="text-muted">Total gastado</small>
+                <h3 class="fw-bold text-danger mb-0">S/ @Model.TotalGastado.ToString("N2")</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 border-0 shadow-sm rounded-3">
+                <small class="text-muted">Disponible</small>
+                <h3 class="fw-bold text-success mb-0">S/ @Model.Disponible.ToString("N2")</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Formulario Nuevo Presupuesto -->
+    <div class="card p-4 border-0 shadow-sm rounded-3 mb-4">
+        <h5 class="fw-bold mb-3">Nuevo presupuesto</h5>
+        <form id="formPresupuesto">
+            <div class="mb-3">
+                <label class="form-label text-muted">Categoría</label>
+                <select class="form-select" id="cbCategoria" required>
+                    <option value="">Selecciona una categoría</option>
+                    @if (Model.ListaCategorias != null)
+                    {
+                        @foreach (var cat in Model.ListaCategorias)
+                        {
+                            <option value="@cat.IdCategoria">@cat.Nombre</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label text-muted">Monto presupuestado</label>
+                <input type="number" step="0.01" class="form-control" id="txtMonto" placeholder="Ejemplo: 500.00" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label text-muted">Mes del presupuesto</label>
+                <input type="month" class="form-control" id="txtMes" required />
+            </div>
+            <button type="button" class="btn btn-primary px-4" onclick="guardarPresupuesto()">Guardar presupuesto</button>
+        </form>
+    </div>
+
+    <!-- 3. Listado de Presupuestos -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h5 class="fw-bold mb-0">Listado de presupuestos</h5>
+            <small class="text-muted">Total registrados: @(Model.ListaPresupuestos?.Count ?? 0)</small>
+        </div>
+        <div style="width: 250px;">
+            <input type="text" id="txtBuscar" class="form-control form-control-sm" placeholder="Buscar por categoría o mes..." onkeyup="filtrarTarjetas()" />
+        </div>
+    </div>
+
+    <!-- Contenedor de Tarjetas -->
+    <div class="row g-3" id="contenedorTarjetas">
+        @if (Model.ListaPresupuestos != null)
+        {
+            @foreach (var item in Model.ListaPresupuestos)
+            {
+                <div class="col-md-6 tarjeta-item" data-categoria="@item.NombreCategoria.ToLower()" data-mes="@item.MesAnio.ToLower()">
+                    <div class="card p-3 border-0 shadow-sm rounded-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h6 class="fw-bold mb-0">@item.NombreCategoria</h6>
+                            <span class="fw-bold text-primary">S/ @item.MontoLimite.ToString("N2")</span>
+                        </div>
+                        <small class="text-muted mb-2 d-block">@item.MesAnio</small>
+
+                        <div class="progress mb-2" style="height: 8px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: @item.PorcentajeUtilizado%"></div>
+                        </div>
+
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>Gastado: <strong class="text-danger">S/ @item.MontoGastado.ToString("N2")</strong></span>
+                            <span>Disponible: <strong class="text-success">S/ @item.Disponible.ToString("N2")</strong></span>
+                        </div>
+                        <small class="text-muted">@item.PorcentajeUtilizado.ToString("F1")% utilizado</small>
+
+                        <div class="text-end mt-2">
+                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarPresupuesto(@item.IdPresupuesto)">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://localhost:7170/api/Presupuesto";
+
+    function guardarPresupuesto() {
+        const idCategoria = document.getElementById('cbCategoria').value;
+        const montoLimite = document.getElementById('txtMonto').value;
+        const mesAnio = document.getElementById('txtMes').value;
+
+        if (!idCategoria) {
+            Swal.fire('Atención', 'Por favor selecciona una categoría.', 'warning');
+            return;
+        }
+        if (!montoLimite || parseFloat(montoLimite) <= 0) {
+            Swal.fire('Atención', 'Ingresa un monto válido mayor a 0.', 'warning');
+            return;
+        }
+        if (!mesAnio) {
+            Swal.fire('Atención', 'Selecciona el mes del presupuesto.', 'warning');
+            return;
+        }
+
+        // Objeto que se enviará a la API
+        const nuevoPresupuesto = {
+            idUsuario: 1, // Se envía el ID de usuario correspondiente
+            idCategoria: parseInt(idCategoria),
+            montoLimite: parseFloat(montoLimite),
+            mesAnio: mesAnio
+        };
+
+        fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(nuevoPresupuesto)
+        })
+        .then(response => {
+            if (response.ok) {
+                Swal.fire({
+                    title: '¡Registrado!',
+                    text: 'El presupuesto ha sido guardado con éxito.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.reload();
+                    }
+                });
+            } else {
+                Swal.fire('Error', 'No se pudo guardar el presupuesto.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'Ocurrió un fallo de conexión con la API.', 'error');
+        });
+    }
+
+    function eliminarPresupuesto(id) {
+        Swal.fire({
+            title: '¿Deseas eliminar este presupuesto?',
+            text: "Se aplicará una eliminación lógica.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`${API_URL}/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire({
+                            title: 'Eliminado',
+                            text: 'El presupuesto fue desactivado.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', 'No se pudo eliminar el presupuesto.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Ocurrió un fallo de conexión con la API.', 'error');
+                });
+            }
+        });
+    }
+
+    function filtrarTarjetas() {
+        const filtro = document.getElementById('txtBuscar').value.toLowerCase();
+        const tarjetas = document.querySelectorAll('.tarjeta-item');
+
+        tarjetas.forEach(t => {
+            const cat = t.getAttribute('data-categoria');
+            const mes = t.getAttribute('data-mes');
+            if (cat.includes(filtro) || mes.includes(filtro)) {
+                t.style.display = '';
+            } else {
+                t.style.display = 'none';
+            }
+        });
+    }
+</script>
