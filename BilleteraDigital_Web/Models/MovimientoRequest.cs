@@ -1,5 +1,5 @@
-﻿namespace BilleteraDigital_Web.Models 
-{ 
+﻿namespace BilleteraDigital_Web.Models
+{
     public class MovimientoRequest
     {
         public int IdUsuario { get; set; }

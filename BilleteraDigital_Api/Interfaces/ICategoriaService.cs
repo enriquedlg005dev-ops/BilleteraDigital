@@ -1,5 +1,6 @@
-﻿using BilleteraDigital_Api.Models;
 using BilleteraDigital_Api.DTOs;
+using BilleteraDigital_Api.Models;
+
 namespace BilleteraDigital_Api.Interfaces
 {
     public interface ICategoriaService

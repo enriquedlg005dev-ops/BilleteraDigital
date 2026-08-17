@@ -1,14 +1,15 @@
-﻿﻿
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - BilleteraDigital</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BilleteraDigital.MVC.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+
     <style>
         :root {
             --bd-bg: #f4f6f9;
@@ -192,16 +193,25 @@
         }
     </style>
 </head>
+
 <body>
     <div class="bd-shell">
+
         <aside class="bd-sidebar">
+
             <div class="bd-brand">
-                <div class="bd-brand-icon"><i class="bi bi-wallet2"></i></div>
+                <div class="bd-brand-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+
                 <div class="bd-brand-text">
                     <div class="bd-title">FinTrack</div>
                     <div class="bd-subtitle">Control financiero</div>
                 </div>
-                <button class="bd-sidebar-toggle ms-auto" type="button" onclick="document.querySelector('.bd-nav').classList.toggle('bd-nav-open')">
+
+                <button class="bd-sidebar-toggle ms-auto"
+                        type="button"
+                        onclick="document.querySelector('.bd-nav').classList.toggle('bd-nav-open')">
                     <i class="bi bi-list"></i>
                 </button>
             </div>
@@ -211,42 +221,71 @@
             }
 
             <ul class="bd-nav">
+
                 <li>
-                    <a class="bd-nav-link @(controllerName == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index">
-                        <i class="bi bi-grid-1x2"></i> Dashboard
+                    <a class="bd-nav-link @(controllerName == "Home" ? "active" : "")"
+                       asp-controller="Home"
+                       asp-action="Index">
+                        <i class="bi bi-grid-1x2"></i>
+                        Dashboard
                     </a>
                 </li>
+
                 <li>
-                    <a class="bd-nav-link @(controllerName == "Movimiento" ? "active" : "")" asp-controller="Movimiento" asp-action="Index">
-                        <i class="bi bi-arrow-left-right"></i> Movimientos
+                    <a class="bd-nav-link @(controllerName == "Movimiento" ? "active" : "")"
+                       asp-controller="Movimiento"
+                       asp-action="Index">
+                        <i class="bi bi-arrow-left-right"></i>
+                        Movimientos
                     </a>
                 </li>
+
                 <li>
-                    <a class="bd-nav-link @(controllerName == "Categoria" ? "active" : "")" asp-controller="Categoria" asp-action="Index">
-                        <i class="bi bi-tag"></i> Categorías
+                    <a class="bd-nav-link @(controllerName == "Categoria" ? "active" : "")"
+                       asp-controller="Categoria"
+                       asp-action="Index">
+                        <i class="bi bi-tag"></i>
+                        Categorías
                     </a>
                 </li>
+
                 <li>
-                    <a class="bd-nav-link @(controllerName == "Presupuesto" ? "active" : "")" asp-controller="Presupuesto" asp-action="Index">
-                        <i class="bi bi-piggy-bank"></i> Presupuestos
+                    <a class="bd-nav-link @(controllerName == "Presupuesto" ? "active" : "")"
+                       asp-controller="Presupuesto"
+                       asp-action="Index">
+                        <i class="bi bi-piggy-bank"></i>
+                        Presupuestos
                     </a>
                 </li>
+
                 <li>
-                    <a class="bd-nav-link @(controllerName == "Reporte" ? "active" : "")" asp-controller="Reporte" asp-action="Index">
-                        <i class="bi bi-bar-chart"></i> Reportes
+                    <a class="bd-nav-link @(controllerName == "Reporte" ? "active" : "")"
+                       asp-controller="Reporte"
+                       asp-action="Index">
+                        <i class="bi bi-bar-chart"></i>
+                        Reportes
                     </a>
                 </li>
+
                 <li>
-                    <a class="bd-nav-link @(controllerName == "Usuario" ? "active" : "")" asp-controller="Usuario" asp-action="MiPerfil">
-                        <i class="bi bi-person-circle"></i> Mi perfil
+                    <a class="bd-nav-link @(controllerName == "Usuario" ? "active" : "")"
+                       asp-controller="Usuario"
+                       asp-action="MiPerfil">
+                        <i class="bi bi-person-circle"></i>
+                        Mi perfil
                     </a>
                 </li>
+
             </ul>
+
         </aside>
 
         <div class="bd-main">
+
             <div class="bd-topbar">
-                <span class="bd-topbar-title">@ViewData["Title"]</span>
+                <span class="bd-topbar-title">
+                    @ViewData["Title"]
+                </span>
             </div>
 
             <main class="bd-content" role="main">
@@ -256,12 +295,15 @@
             <footer class="bd-footer">
                 &copy; 2026 - FinTrack
             </footer>
+
         </div>
+
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,5 +1,5 @@
 ﻿namespace BilleteraDigital_Api.DTOs
-{
+{ 
     public class CategoriaRequest
     {
 

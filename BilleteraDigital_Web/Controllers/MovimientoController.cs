@@ -1,14 +1,15 @@
-﻿using BilleteraDigital_Web.Models;
+
+using BilleteraDigital_Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 
-namespace BilleteraDigital.MVC.Controllers
+namespace BilleteraDigital_Web.Controllers
 {
     public class MovimientoController : Controller
     {
         private readonly HttpClient _httpClient;
-        private readonly string apiBase = "https://localhost:7026/";
+        private readonly string apiBase = "https://localhost:7170/";
 
         public MovimientoController(HttpClient httpClient)
         {
@@ -21,6 +22,10 @@ namespace BilleteraDigital.MVC.Controllers
             var response = await _httpClient.GetAsync("api/Movimiento");
             var content = await response.Content.ReadAsStringAsync();
             List<MovimientoResponse> list = JsonConvert.DeserializeObject<List<MovimientoResponse>>(content) ?? new List<MovimientoResponse>();
+
+            List<CategoriaResponse> listCategorias = await this.listCategorias();
+            ViewBag.categorias = new SelectList(listCategorias, "IdCategoria", "Nombre");
+
             return View(list);
         }
 

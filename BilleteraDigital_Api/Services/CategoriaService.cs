@@ -1,10 +1,10 @@
-﻿using System.Data;
-using Microsoft.Data.SqlClient;
+﻿using BilleteraDigital_Api.DTOs;
 using BilleteraDigital_Api.Interfaces;
 using BilleteraDigital_Api.Models;
-using BilleteraDigital_Api.DTOs;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
-namespace Asp_Web_Api_.Services
+namespace BilleteraDigital_Api.Services
 {
     public class CategoriaService : ICategoriaService
     {
@@ -112,7 +112,5 @@ namespace Asp_Web_Api_.Services
             conn.Open();
             cmd.ExecuteNonQuery();
         }
-
-        
     }
 }

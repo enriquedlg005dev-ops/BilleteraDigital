@@ -1,13 +1,14 @@
-﻿using BilleteraDigital_Web.Models;
+
+using BilleteraDigital_Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace BilleteraDigital.MVC.Controllers
+namespace BilleteraDigital_Web.Controllers
 {
     public class CategoriaController : Controller
     {
         private readonly HttpClient _httpClient;
-        private readonly string apiBase = "https://localhost:7026/";
+        private readonly string apiBase = "https://localhost:7170/";
 
         public CategoriaController(HttpClient httpClient)
         {
