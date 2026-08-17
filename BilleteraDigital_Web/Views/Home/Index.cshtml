@@ -1,8 +1,282 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model BilleteraDigital_Web.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid py-4">
+
+    <!-- TÍTULO -->
+    <div class="mb-4">
+        <h1 class="fw-bold">Dashboard</h1>
+        <p class="text-muted">
+            Resumen de tus finanzas personales
+        </p>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.Error
+        </div>
+    }
+
+    <!-- TARJETAS -->
+    <div class="row g-4 mb-4">
+
+        <!-- INGRESOS -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">
+                        Total de ingresos
+                    </h6>
+
+                    <h2 class="fw-bold text-success">
+                        S/ @Model.Resumen.TotalIngresos.ToString("N2")
+                    </h2>
+
+                    <small class="text-muted">
+                        Dinero ingresado
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- GASTOS -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">
+                        Total de gastos
+                    </h6>
+
+                    <h2 class="fw-bold text-danger">
+                        S/ @Model.Resumen.TotalGastos.ToString("N2")
+                    </h2>
+
+                    <small class="text-muted">
+                        Dinero gastado
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- SALDO -->
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">
+                        Saldo disponible
+                    </h6>
+
+                    <h2 class="fw-bold text-primary">
+                        S/ @Model.Resumen.Saldo.ToString("N2")
+                    </h2>
+
+                    <small class="text-muted">
+                        Balance actual
+                    </small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- GRÁFICOS -->
+    <div class="row g-4">
+
+        <!-- GASTOS POR CATEGORÍA -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-3">
+                        Gastos por categoría
+                    </h5>
+
+                    <canvas id="graficoCategorias"></canvas>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- INGRESOS VS GASTOS -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-3">
+                        Ingresos vs Gastos
+                    </h5>
+
+                    <canvas id="graficoTipos"></canvas>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- TABLA DE CATEGORÍAS -->
+
+    <div class="card shadow-sm border-0 mt-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+                Resumen por categoría
+            </h5>
+
+            <div class="table-responsive">
+
+                <table class="table table-hover">
+
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model.Categorias.Any())
+                        {
+                            foreach (var categoria in Model.Categorias)
+                            {
+                                <tr>
+                                    <td>
+                                        @categoria.Categoria
+                                    </td>
+
+                                    <td class="fw-bold">
+                                        S/ @categoria.Total.ToString("N2")
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2" class="text-center text-muted">
+                                    No hay movimientos registrados.
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+
+
+<!-- CHART.JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    // ===============================
+    // GRÁFICO POR CATEGORÍA
+    // ===============================
+
+    const categorias = @Html.Raw(
+                System.Text.Json.JsonSerializer.Serialize(
+                        Model.Categorias.Select(x => x.Categoria)
+                )
+        );
+
+    const totalesCategorias = @Html.Raw(
+                System.Text.Json.JsonSerializer.Serialize(
+                        Model.Categorias.Select(x => x.Total)
+                )
+        );
+
+
+    new Chart(document.getElementById('graficoCategorias'), {
+
+        type: 'doughnut',
+
+        data: {
+
+            labels: categorias,
+
+            datasets: [{
+                data: totalesCategorias
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+
+        }
+
+    });
+
+
+    // ===============================
+    // INGRESOS VS GASTOS
+    // ===============================
+
+    const tipos = @Html.Raw(
+                System.Text.Json.JsonSerializer.Serialize(
+                        Model.Tipos.Select(x => x.Tipo)
+                )
+        );
+
+    const totalesTipos = @Html.Raw(
+                System.Text.Json.JsonSerializer.Serialize(
+                        Model.Tipos.Select(x => x.Total)
+                )
+        );
+
+
+    new Chart(document.getElementById('graficoTipos'), {
+
+        type: 'bar',
+
+        data: {
+
+            labels: tipos,
+
+            datasets: [{
+                label: 'Monto',
+                data: totalesTipos
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+
+        }
+
+    });
+
+</script>

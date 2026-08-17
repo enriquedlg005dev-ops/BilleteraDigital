@@ -6,27 +6,34 @@ namespace BilleteraDigital_Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly HttpClient _httpClient;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IHttpClientFactory httpClientFactory)
         {
-            _logger = logger;
+            _httpClient = httpClientFactory.CreateClient("BilleteraApi");
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
+            int idUsuario = 1;
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+            var resumen = await _httpClient.GetFromJsonAsync<DashboardResumenViewModel>(
+                $"api/Dashboard/resumen/{idUsuario}");
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var categorias = await _httpClient.GetFromJsonAsync<List<DashboardCategoriaViewModel>>(
+                $"api/Dashboard/categorias/{idUsuario}");
+
+            var tipos = await _httpClient.GetFromJsonAsync<List<DashboardTipoViewModel>>(
+                $"api/Dashboard/tipos/{idUsuario}");
+
+            var model = new DashboardViewModel
+            {
+                Resumen = resumen ?? new DashboardResumenViewModel(),
+                Categorias = categorias ?? new List<DashboardCategoriaViewModel>(),
+                Tipos = tipos ?? new List<DashboardTipoViewModel>()
+            };
+
+            return View(model);
         }
     }
 }

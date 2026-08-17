@@ -13,12 +13,12 @@ namespace BilleteraDigital_Web.Controllers
             {
                 TotalPresupuestado = 4560.00m,
                 TotalGastado = 3595.00m,
-                ListaCategorias = new List<Categoria>
-                {
-                    new Categoria { IdCategoria = 1, Nombre = "Comida" },
-                    new Categoria { IdCategoria = 2, Nombre = "Componentes PC" },
-                    new Categoria { IdCategoria = 3, Nombre = "Servicios" }
-                },
+                ListaCategorias = new List<CategoriaResponse>
+{
+    new CategoriaResponse { IdCategoria = 1, Nombre = "Comida" },
+    new CategoriaResponse { IdCategoria = 2, Nombre = "Componentes PC" },
+    new CategoriaResponse { IdCategoria = 3, Nombre = "Servicios" }
+},
                 ListaPresupuestos = new List<PresupuestoItemDto>
                 {
                     new PresupuestoItemDto

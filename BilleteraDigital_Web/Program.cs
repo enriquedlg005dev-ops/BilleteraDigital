@@ -5,7 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 // --- 1. ZONA DE SERVICIOS ---
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("BilleteraApi", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5298/");
+});
 
 builder.Services.AddDistributedMemoryCache();
 

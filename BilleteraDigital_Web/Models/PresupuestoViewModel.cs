@@ -2,15 +2,13 @@
 {
     public class PresupuestoViewModel
     {
-       
+
         public decimal TotalPresupuestado { get; set; }
         public decimal TotalGastado { get; set; }
         public decimal Disponible => TotalPresupuestado - TotalGastado;
 
-        
-        public List<Categoria> ListaCategorias { get; set; } = new List<Categoria>();
+        public List<CategoriaResponse> ListaCategorias { get; set; } = new List<CategoriaResponse>();
 
-       
         public List<PresupuestoItemDto> ListaPresupuestos { get; set; } = new List<PresupuestoItemDto>();
     }
 
