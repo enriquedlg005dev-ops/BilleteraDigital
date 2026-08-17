@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using BilleteraDigital_Api.Models;
-using BilleteraDigital_Api.Repository;
 using BilleteraDigital_Api.DTOs;
+using BilleteraDigital_Api.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BilleteraDigital_Api.Controllers
 {
@@ -9,9 +8,10 @@ namespace BilleteraDigital_Api.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
-        private readonly IUsuario _usuarioService;
 
-        public UsuarioController(IUsuario usuarioService)
+        private readonly IUsuarioService _usuarioService;
+
+        public UsuarioController(IUsuarioService usuarioService)
         {
             _usuarioService = usuarioService;
         }
@@ -27,9 +27,9 @@ namespace BilleteraDigital_Api.Controllers
         public IActionResult GetUsuarioPorId(int id)
         {
             var usuario = _usuarioService.GetUsuarioPorId(id);
-            if (usuario == null) 
+            if (usuario == null)
                 return NotFound(new { mensaje = "Usuario no encontrado" });
-                
+
             return Ok(usuario);
         }
 
@@ -52,6 +52,19 @@ namespace BilleteraDigital_Api.Controllers
         {
             var mensaje = _usuarioService.Eliminar(id);
             return Ok(new { mensaje });
+        }
+
+        [HttpPost("Login")]
+        public IActionResult Login([FromBody] UsuarioRequestLogin obj)
+        {
+            var usuario = _usuarioService.Login(obj);
+
+            if (usuario == null)
+            {
+                return Unauthorized(new { mensaje = "Correo o contraseña incorrectos" });
+            }
+
+            return Ok(usuario);
         }
     }
 }

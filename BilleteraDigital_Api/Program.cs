@@ -1,4 +1,4 @@
-using BilleteraDigital_Api.Repository;
+using BilleteraDigital_Api.Interfaces;
 using BilleteraDigital_Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +9,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Aquí registramos la Inyección de Dependencias
-builder.Services.AddScoped<IUsuario, UsuarioService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
 var app = builder.Build();
 
