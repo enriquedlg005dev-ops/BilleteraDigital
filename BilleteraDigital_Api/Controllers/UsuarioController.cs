@@ -9,9 +9,9 @@ namespace BilleteraDigital_Api.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
-        private readonly IUsuario _usuarioService;
+        private readonly IUsuarioService _usuarioService;
 
-        public UsuarioController(IUsuario usuarioService)
+        public UsuarioController(IUsuarioService usuarioService)
         {
             _usuarioService = usuarioService;
         }

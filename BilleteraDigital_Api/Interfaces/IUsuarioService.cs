@@ -3,7 +3,7 @@ using BilleteraDigital_Api.Models;
 
 namespace BilleteraDigital_Api.Interfaces
 {
-    public interface IUsuario
+    public interface IUsuarioService
     {
         IEnumerable<Usuario> GetUsuarios();
         Usuario GetUsuarioPorId(int id);

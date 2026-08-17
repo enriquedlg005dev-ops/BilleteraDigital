@@ -6,7 +6,7 @@ using BilleteraDigital_Api.DTOs;
 
 namespace BilleteraDigital_Api.Services
 {
-    public class UsuarioService : IUsuario
+    public class UsuarioService : IUsuarioService
     {
         private readonly string? _cadenaSql;
 
