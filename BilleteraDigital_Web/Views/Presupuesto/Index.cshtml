@@ -3,14 +3,13 @@
     ViewData["Title"] = "Presupuestos";
 }
 
-<!-- CDN de SweetAlert2 -->
+<!-- CDN SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="container-fluid p-4">
     <h2 class="fw-bold">Presupuestos</h2>
     <p class="text-muted">Controla cuánto planeas gastar por categoría y mes.</p>
-
-    <!-- 1. Tarjetas de Resumen Superior -->
+        <!-- 1. Tarjetas de Resumen -->
     <div class="row g-3 mb-4">
         <div class="col-md-4">
             <div class="card p-3 border-0 shadow-sm rounded-3">
@@ -44,7 +43,7 @@
                     {
                         @foreach (var cat in Model.ListaCategorias)
                         {
-                            <option value="@cat.IdCategoria">@cat.Nombre</option>
+                            <option value="@cat.Nombre">@cat.Nombre</option>
                         }
                     }
                 </select>
@@ -61,24 +60,23 @@
         </form>
     </div>
 
-    <!-- 3. Listado de Presupuestos -->
+    <!-- 3. Listado en Cards -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <h5 class="fw-bold mb-0">Listado de presupuestos</h5>
             <small class="text-muted">Total registrados: @(Model.ListaPresupuestos?.Count ?? 0)</small>
         </div>
         <div style="width: 250px;">
-            <input type="text" id="txtBuscar" class="form-control form-control-sm" placeholder="Buscar por categoría o mes..." onkeyup="filtrarTarjetas()" />
+            <input type="text" id="txtBuscar" class="form-control form-control-sm" placeholder="Buscar por categoría..." onkeyup="filtrarTarjetas()" />
         </div>
     </div>
 
-    <!-- Contenedor de Tarjetas -->
     <div class="row g-3" id="contenedorTarjetas">
-        @if (Model.ListaPresupuestos != null)
+        @if (Model.ListaPresupuestos != null && Model.ListaPresupuestos.Any())
         {
             @foreach (var item in Model.ListaPresupuestos)
             {
-                <div class="col-md-6 tarjeta-item" data-categoria="@item.NombreCategoria.ToLower()" data-mes="@item.MesAnio.ToLower()">
+                <div class="col-md-6 tarjeta-item" data-categoria="@(item.NombreCategoria?.ToLower() ?? "")">
                     <div class="card p-3 border-0 shadow-sm rounded-3">
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <h6 class="fw-bold mb-0">@item.NombreCategoria</h6>
@@ -103,18 +101,25 @@
                 </div>
             }
         }
+        else
+        {
+            <div class="col-12 text-center text-muted py-4">
+                <p>No se encontraron presupuestos registrados.</p>
+            </div>
+        }
     </div>
 </div>
 
 <script>
-    const API_URL = "https://localhost:7170/api/Presupuesto";
+    //  puerto  Program.cs (5298)
+    const API_URL = "http://localhost:5298/api/Presupuesto";
 
     function guardarPresupuesto() {
-        const idCategoria = document.getElementById('cbCategoria').value;
+        const categoriaNombre = document.getElementById('cbCategoria').value;
         const montoLimite = document.getElementById('txtMonto').value;
         const mesAnio = document.getElementById('txtMes').value;
 
-        if (!idCategoria) {
+        if (!categoriaNombre) {
             Swal.fire('Atención', 'Por favor selecciona una categoría.', 'warning');
             return;
         }
@@ -127,12 +132,14 @@
             return;
         }
 
-        // Objeto que se enviará a la API
+       
         const nuevoPresupuesto = {
-            idUsuario: 1, // Se envía el ID de usuario correspondiente
-            idCategoria: parseInt(idCategoria),
-            montoLimite: parseFloat(montoLimite),
-            mesAnio: mesAnio
+            id: 0,
+            monto: parseFloat(montoLimite),
+            categoria: categoriaNombre,
+            fecha: mesAnio + "-01", // Formatea "YYYY-MM" a "YYYY-MM-01"
+            usuarioId: 1,
+            estado: 1
         };
 
         fetch(API_URL, {
@@ -207,8 +214,7 @@
 
         tarjetas.forEach(t => {
             const cat = t.getAttribute('data-categoria');
-            const mes = t.getAttribute('data-mes');
-            if (cat.includes(filtro) || mes.includes(filtro)) {
+            if (cat.includes(filtro)) {
                 t.style.display = '';
             } else {
                 t.style.display = 'none';

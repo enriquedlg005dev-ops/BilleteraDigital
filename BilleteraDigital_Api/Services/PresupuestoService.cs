@@ -3,7 +3,7 @@ using BilleteraDigital_Api.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace BilleteraDigital_Api.Service
+namespace BilleteraDigital_Api.Services
 {
     public class PresupuestoService : IPresupuestoService
     {
@@ -14,9 +14,9 @@ namespace BilleteraDigital_Api.Service
             _connectionString = configuration.GetConnectionString("conexion")!;
         }
 
-        public async Task<IEnumerable<PresupuestoDTO>> ObtenerTodosAsync()
+        public async Task<IEnumerable<PresupuestoResponse>> ObtenerTodosAsync()
         {
-            var lista = new List<PresupuestoDTO>();
+            var lista = new List<PresupuestoResponse>();
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -28,7 +28,7 @@ namespace BilleteraDigital_Api.Service
                     {
                         while (await reader.ReadAsync())
                         {
-                            lista.Add(new PresupuestoDTO
+                            lista.Add(new PresupuestoResponse
                             {
                                 Id = reader.GetInt32("Id"),
                                 Monto = reader.GetDecimal("Monto"),
@@ -43,9 +43,9 @@ namespace BilleteraDigital_Api.Service
             return lista;
         }
 
-        public async Task<PresupuestoDTO?> ObtenerPorIdAsync(int id)
+        public async Task<PresupuestoResponse?> ObtenerPorIdAsync(int id)
         {
-            PresupuestoDTO? dto = null;
+            PresupuestoResponse? dto = null;
 
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -59,7 +59,7 @@ namespace BilleteraDigital_Api.Service
                     {
                         if (await reader.ReadAsync())
                         {
-                            dto = new PresupuestoDTO
+                            dto = new PresupuestoResponse
                             {
                                 Id = reader.GetInt32("Id"),
                                 Monto = reader.GetDecimal("Monto"),
@@ -74,7 +74,7 @@ namespace BilleteraDigital_Api.Service
             return dto;
         }
 
-        public async Task<bool> CrearAsync(PresupuestoDTO presupuesto)
+        public async Task<bool> CrearAsync(PresupuestoResponse presupuesto)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -92,7 +92,7 @@ namespace BilleteraDigital_Api.Service
             }
         }
 
-        public async Task<bool> ActualizarAsync(PresupuestoDTO presupuesto)
+        public async Task<bool> ActualizarAsync(PresupuestoResponse presupuesto)
         {
             using (var connection = new SqlConnection(_connectionString))
             {

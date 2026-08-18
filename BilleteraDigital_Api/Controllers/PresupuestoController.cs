@@ -34,7 +34,7 @@ namespace BilleteraDigital_Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] PresupuestoDTO presupuesto)
+        public async Task<IActionResult> Create([FromBody] PresupuestoResponse presupuesto)
         {
             if (presupuesto == null)
                 return BadRequest(new { mensaje = "Los datos del presupuesto son obligatorios." });
@@ -48,7 +48,7 @@ namespace BilleteraDigital_Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] PresupuestoDTO presupuesto)
+        public async Task<IActionResult> Update([FromBody] PresupuestoResponse presupuesto)
         {
             if (presupuesto == null)
                 return BadRequest(new { mensaje = "Los datos del presupuesto son obligatorios." });

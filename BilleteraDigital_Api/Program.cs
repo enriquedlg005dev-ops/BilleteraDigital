@@ -1,6 +1,5 @@
 using BilleteraDigital_Api.Interfaces;
 using BilleteraDigital_Api.Services;
-using BilleteraDigital_Api.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 

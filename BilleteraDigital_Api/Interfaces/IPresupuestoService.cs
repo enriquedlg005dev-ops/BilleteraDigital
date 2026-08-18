@@ -5,10 +5,10 @@ namespace BilleteraDigital_Api.Interfaces
 {
     public interface IPresupuestoService
     {
-        Task<IEnumerable<PresupuestoDTO>> ObtenerTodosAsync();
-        Task<PresupuestoDTO?> ObtenerPorIdAsync(int id);
-        Task<bool> CrearAsync(PresupuestoDTO presupuesto);
-        Task<bool> ActualizarAsync(PresupuestoDTO presupuesto);
+        Task<IEnumerable<PresupuestoResponse>> ObtenerTodosAsync();
+        Task<PresupuestoResponse?> ObtenerPorIdAsync(int id);
+        Task<bool> CrearAsync(PresupuestoResponse presupuesto);
+        Task<bool> ActualizarAsync(PresupuestoResponse presupuesto);
         Task<bool> EliminarLogicoAsync(int id);
     }
 }

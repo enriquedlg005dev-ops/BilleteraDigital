@@ -1,6 +1,6 @@
 ﻿namespace BilleteraDigital_Api.DTOs
 {
-    public class PresupuestoDTO
+    public class PresupuestoResponse
     {
         public int Id { get; set; }
         public decimal Monto { get; set; }
