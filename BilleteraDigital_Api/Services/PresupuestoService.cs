@@ -11,7 +11,7 @@ namespace BilleteraDigital_Api.Services
 
         public PresupuestoService(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("conexion")!;
+            _connectionString = configuration.GetConnectionString("DefaultConnection")!;
         }
 
         public async Task<IEnumerable<PresupuestoResponse>> ObtenerTodosAsync()
