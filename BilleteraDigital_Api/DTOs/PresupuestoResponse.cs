@@ -5,8 +5,9 @@
         public int Id { get; set; }
         public decimal Monto { get; set; }
         public string Categoria { get; set; } = string.Empty;
-        public DateTime Fecha { get; set; }
+        public DateTime InicioPresupuesto { get; set; }
+        public DateTime FinalPresupuesto { get; set; }
         public int UsuarioId { get; set; }
-        public int Estado { get; set; } 
+        public int Estado { get; set; }
     }
 }
