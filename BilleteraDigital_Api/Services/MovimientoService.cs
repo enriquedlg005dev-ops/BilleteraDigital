@@ -7,7 +7,7 @@ namespace BilleteraDigital_Api.Services
 {
     public class MovimientoService : IMovimientoService
     {
-        private readonly string _connectionString;
+        private readonly string? _connectionString;
 
         public MovimientoService(IConfiguration configuration)
         {
@@ -27,8 +27,8 @@ namespace BilleteraDigital_Api.Services
             cmd.Parameters.AddWithValue("@IdCategoria", m.IdCategoria);
             cmd.Parameters.AddWithValue("@IdTipoMovimiento", m.IdTipoMovimiento);
             cmd.Parameters.AddWithValue("@Monto", m.Monto);
-            cmd.Parameters.AddWithValue("@Descripcion", (object)m.Descripcion ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@FechaMovimiento", m.FechaMovimiento == default ? (object)DBNull.Value : m.FechaMovimiento);
+            cmd.Parameters.AddWithValue("@Descripcion", m.Descripcion);
+            cmd.Parameters.AddWithValue("@FechaMovimiento", m.FechaMovimiento);
 
             conn.Open();
             cmd.ExecuteNonQuery();
@@ -49,7 +49,7 @@ namespace BilleteraDigital_Api.Services
             {
                 resultado.Add(new Movimiento
                 {
-                    IdMovimiento = reader.GetInt32(reader.GetOrdinal("IdMovimiento")),
+                    IdMovimiento = reader.GetInt32(0),
                     IdUsuario = reader.GetInt32(reader.GetOrdinal("IdUsuario")),
                     IdCategoria = reader.GetInt32(reader.GetOrdinal("IdCategoria")),
                     IdTipoMovimiento = reader.GetInt32(reader.GetOrdinal("IdTipoMovimiento")),
