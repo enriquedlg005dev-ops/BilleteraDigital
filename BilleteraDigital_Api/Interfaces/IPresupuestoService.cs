@@ -7,8 +7,8 @@ namespace BilleteraDigital_Api.Interfaces
     {
         Task<IEnumerable<PresupuestoResponse>> ObtenerTodosAsync();
         Task<PresupuestoResponse?> ObtenerPorIdAsync(int id);
-        Task<bool> CrearAsync(PresupuestoResponse presupuesto);
-        Task<bool> ActualizarAsync(PresupuestoResponse presupuesto);
+        Task<bool> CrearAsync(PresupuestoRequest presupuesto);
+        Task<bool> ActualizarAsync(PresupuestoRequestUpdate presupuesto);
         Task<bool> EliminarLogicoAsync(int id);
     }
 }

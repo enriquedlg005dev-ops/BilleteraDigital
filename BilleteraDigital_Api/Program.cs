@@ -25,6 +25,7 @@ builder.Services.AddScoped<IPresupuestoService, PresupuestoService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IMovimientoService, MovimientoService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IReporteService, ReporteService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

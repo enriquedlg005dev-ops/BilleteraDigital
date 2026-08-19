@@ -34,7 +34,7 @@ namespace BilleteraDigital_Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] PresupuestoResponse presupuesto)
+        public async Task<IActionResult> Create([FromBody] PresupuestoRequest presupuesto)
         {
             if (presupuesto == null)
                 return BadRequest(new { mensaje = "Los datos del presupuesto son obligatorios." });
@@ -48,17 +48,27 @@ namespace BilleteraDigital_Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] PresupuestoResponse presupuesto)
+        public async Task<IActionResult> Update(
+            [FromBody] PresupuestoRequestUpdate presupuesto)
         {
             if (presupuesto == null)
-                return BadRequest(new { mensaje = "Los datos del presupuesto son obligatorios." });
+                return BadRequest(new
+                {
+                    mensaje = "Los datos del presupuesto son obligatorios."
+                });
 
             var exito = await _service.ActualizarAsync(presupuesto);
 
             if (!exito)
-                return NotFound(new { mensaje = "No se encontró el presupuesto." });
+                return NotFound(new
+                {
+                    mensaje = "No se encontró el presupuesto."
+                });
 
-            return Ok(new { mensaje = "Presupuesto actualizado correctamente." });
+            return Ok(new
+            {
+                mensaje = "Presupuesto actualizado correctamente."
+            });
         }
 
         [HttpDelete("{id}")]

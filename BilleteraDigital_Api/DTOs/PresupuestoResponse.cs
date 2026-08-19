@@ -2,12 +2,17 @@
 {
     public class PresupuestoResponse
     {
-        public int Id { get; set; }
-        public decimal Monto { get; set; }
-        public string Categoria { get; set; } = string.Empty;
-        public DateTime InicioPresupuesto { get; set; }
-        public DateTime FinalPresupuesto { get; set; }
-        public int UsuarioId { get; set; }
-        public int Estado { get; set; }
+        public int IdPresupuesto { get; set; }
+        public int IdUsuario { get; set; }
+        public string Usuario { get; set; } 
+        public int IdCategoria { get; set; }
+        public string Categoria { get; set; }
+        public decimal MontoLimite { get; set; }
+        public decimal MontoGastado { get; set; }
+        public decimal MontoDisponible { get; set; }
+        public DateOnly FechaInicio { get; set; }
+        public DateOnly FechaFin { get; set; }
+        public bool Estado { get; set; }
+        public DateTime FechaRegistro { get; set; }
     }
 }

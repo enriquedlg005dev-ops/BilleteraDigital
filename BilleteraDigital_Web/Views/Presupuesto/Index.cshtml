@@ -1,224 +1,1062 @@
 ﻿@model BilleteraDigital_Web.Models.PresupuestoViewModel
+
 @{
     ViewData["Title"] = "Presupuestos";
 }
 
-<!-- CDN SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<div class="container-fluid p-4">
-    <h2 class="fw-bold">Presupuestos</h2>
-    <p class="text-muted">Controla cuánto planeas gastar por categoría y mes.</p>
-        <!-- 1. Tarjetas de Resumen -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card p-3 border-0 shadow-sm rounded-3">
-                <small class="text-muted">Total presupuestado</small>
-                <h3 class="fw-bold mb-0">S/ @Model.TotalPresupuestado.ToString("N2")</h3>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card p-3 border-0 shadow-sm rounded-3">
-                <small class="text-muted">Total gastado</small>
-                <h3 class="fw-bold text-danger mb-0">S/ @Model.TotalGastado.ToString("N2")</h3>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card p-3 border-0 shadow-sm rounded-3">
-                <small class="text-muted">Disponible</small>
-                <h3 class="fw-bold text-success mb-0">S/ @Model.Disponible.ToString("N2")</h3>
-            </div>
-        </div>
+<style>
+
+    .presupuesto-container {
+        padding: 10px;
+    }
+
+    .presupuesto-header {
+        margin-bottom: 25px;
+    }
+
+        .presupuesto-header h2 {
+            font-weight: 700;
+            color: #1a2140;
+            margin-bottom: 5px;
+        }
+
+        .presupuesto-header p {
+            color: #9099b5;
+            margin: 0;
+        }
+
+    /* TARJETAS RESUMEN */
+
+    .resumen-card {
+        background: white;
+        border: none;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,.05);
+        height: 100%;
+    }
+
+        .resumen-card small {
+            color: #9099b5;
+            font-weight: 500;
+        }
+
+        .resumen-card h3 {
+            margin-top: 8px;
+            margin-bottom: 0;
+            font-weight: 700;
+        }
+
+    .resumen-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eef1ff;
+        color: #3d5af1;
+        font-size: 20px;
+    }
+
+    /* FORMULARIO */
+
+    .presupuesto-form-card {
+        background: white;
+        border: none;
+        border-radius: 14px;
+        padding: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,.05);
+    }
+
+        .presupuesto-form-card h5 {
+            font-weight: 700;
+            color: #1a2140;
+            margin-bottom: 20px;
+        }
+
+    .form-label {
+        font-weight: 600;
+        color: #555d78;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 9px;
+        border: 1px solid #dfe3ec;
+        padding: 10px 12px;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #3d5af1;
+            box-shadow: 0 0 0 .15rem rgba(61,90,241,.12);
+        }
+
+    .btn-guardar {
+        background: #3d5af1;
+        color: white;
+        border: none;
+        border-radius: 9px;
+        padding: 10px 20px;
+        font-weight: 600;
+    }
+
+        .btn-guardar:hover {
+            background: #3048d1;
+            color: white;
+        }
+
+    /* LISTADO */
+
+    .listado-header {
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+
+        .listado-header h5 {
+            font-weight: 700;
+            color: #1a2140;
+            margin-bottom: 3px;
+        }
+
+    .buscar-presupuesto {
+        width: 250px;
+    }
+
+    /* TARJETAS */
+
+    .presupuesto-card {
+        background: white;
+        border: none;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,.05);
+        height: 100%;
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+        .presupuesto-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,.08);
+        }
+
+    .categoria-nombre {
+        font-weight: 700;
+        color: #1a2140;
+    }
+
+    .monto-limite {
+        font-weight: 700;
+        color: #3d5af1;
+        font-size: 18px;
+    }
+
+    .mes-presupuesto {
+        color: #9099b5;
+        font-size: 13px;
+    }
+
+    .progress {
+        background-color: #edf0f5;
+        border-radius: 10px;
+    }
+
+    .progress-bar {
+        border-radius: 10px;
+    }
+
+    .datos-presupuesto {
+        font-size: 13px;
+    }
+
+    .btn-eliminar {
+        border-radius: 8px;
+    }
+
+    .sin-presupuestos {
+        background: white;
+        border-radius: 14px;
+        padding: 40px;
+        text-align: center;
+        color: #9099b5;
+    }
+
+    @@media (max-width: 768px) {
+
+        .buscar-presupuesto {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .listado-header {
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+    }
+
+</style>
+
+
+<div class="presupuesto-container">
+
+    <!-- HEADER -->
+
+    <div class="presupuesto-header">
+
+        <h2>
+            <i class="bi bi-piggy-bank"></i>
+            Presupuestos
+        </h2>
+
+        <p>
+            Controla cuánto planeas gastar por categoría y período.
+        </p>
+
     </div>
 
-    <!-- 2. Formulario Nuevo Presupuesto -->
-    <div class="card p-4 border-0 shadow-sm rounded-3 mb-4">
-        <h5 class="fw-bold mb-3">Nuevo presupuesto</h5>
-        <form id="formPresupuesto">
-            <div class="mb-3">
-                <label class="form-label text-muted">Categoría</label>
-                <select class="form-select" id="cbCategoria" required>
-                    <option value="">Selecciona una categoría</option>
+
+    <!-- ========================= -->
+    <!-- TARJETAS DE RESUMEN -->
+    <!-- ========================= -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- TOTAL PRESUPUESTADO -->
+
+        <div class="col-md-4">
+
+            <div class="resumen-card">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <small>
+                            Total presupuestado
+                        </small>
+
+                        <h3>
+                            S/
+                            @Model.TotalPresupuestado.ToString("N2")
+                        </h3>
+
+                    </div>
+
+                    <div class="resumen-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL GASTADO -->
+
+        <div class="col-md-4">
+
+            <div class="resumen-card">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <small>
+                            Total gastado
+                        </small>
+
+                        <h3 class="text-danger">
+                            S/
+                            @Model.TotalGastado.ToString("N2")
+                        </h3>
+
+                    </div>
+
+                    <div class="resumen-icon">
+                        <i class="bi bi-credit-card"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DISPONIBLE -->
+
+        <div class="col-md-4">
+
+            <div class="resumen-card">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <small>
+                            Disponible
+                        </small>
+
+                        <h3 class="text-success">
+                            S/
+                            @Model.Disponible.ToString("N2")
+                        </h3>
+
+                    </div>
+
+                    <div class="resumen-icon">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- NUEVO PRESUPUESTO -->
+    <!-- ========================= -->
+
+    <div class="presupuesto-form-card mb-4">
+
+        <h5>
+            <i class="bi bi-plus-circle"></i>
+            Nuevo presupuesto
+        </h5>
+
+
+        <div class="row g-3">
+
+            <!-- CATEGORIA -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Categoría
+                </label>
+
+                <select class="form-select"
+                        id="cbCategoria">
+
+                    <option value="">
+                        Selecciona una categoría
+                    </option>
+
                     @if (Model.ListaCategorias != null)
                     {
-                        @foreach (var cat in Model.ListaCategorias)
+                        foreach (var cat in Model.ListaCategorias)
                         {
-                            <option value="@cat.Nombre">@cat.Nombre</option>
+                            <option value="@cat.IdCategoria">
+                                @cat.Nombre
+                            </option>
                         }
                     }
+
                 </select>
+
             </div>
-            <div class="mb-3">
-                <label class="form-label text-muted">Monto presupuestado</label>
-                <input type="number" step="0.01" class="form-control" id="txtMonto" placeholder="Ejemplo: 500.00" required />
+
+
+            <!-- MONTO LIMITE -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Monto límite
+                </label>
+
+                <input type="number"
+                       step="0.01"
+                       min="0.01"
+                       class="form-control"
+                       id="txtMonto"
+                       placeholder="Ejemplo: 500.00" />
+
             </div>
-            <div class="mb-3">
-                <label class="form-label text-muted">Mes del presupuesto</label>
-                <input type="month" class="form-control" id="txtMes" required />
+
+
+            <!-- MONTO GASTADO -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Monto gastado
+                </label>
+
+                <input type="number"
+                       step="0.01"
+                       min="0"
+                       class="form-control"
+                       id="txtMontoGastado"
+                       placeholder="Ejemplo: 100.00"
+                       value="0" />
+
             </div>
-            <button type="button" class="btn btn-primary px-4" onclick="guardarPresupuesto()">Guardar presupuesto</button>
-        </form>
+
+
+            <!-- FECHA INICIO -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Fecha de inicio
+                </label>
+
+                <input type="date"
+                       class="form-control"
+                       id="txtFechaInicio" />
+
+            </div>
+
+
+            <!-- FECHA FIN -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Fecha de fin
+                </label>
+
+                <input type="date"
+                       class="form-control"
+                       id="txtFechaFin" />
+
+            </div>
+
+
+            <!-- BOTON -->
+
+            <div class="col-md-4 d-flex align-items-end">
+
+                <button type="button"
+                        class="btn btn-guardar"
+                        onclick="guardarPresupuesto()">
+
+                    <i class="bi bi-save"></i>
+                    Guardar presupuesto
+
+                </button>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <!-- 3. Listado en Cards -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <!-- ========================= -->
+    <!-- LISTADO -->
+    <!-- ========================= -->
+
+    <div class="listado-header d-flex justify-content-between align-items-center">
+
         <div>
-            <h5 class="fw-bold mb-0">Listado de presupuestos</h5>
-            <small class="text-muted">Total registrados: @(Model.ListaPresupuestos?.Count ?? 0)</small>
+
+            <h5>
+                Listado de presupuestos
+            </h5>
+
+            <small class="text-muted">
+
+                Total registrados:
+                @(Model.ListaPresupuestos?.Count ?? 0)
+
+            </small>
+
         </div>
-        <div style="width: 250px;">
-            <input type="text" id="txtBuscar" class="form-control form-control-sm" placeholder="Buscar por categoría..." onkeyup="filtrarTarjetas()" />
+
+
+        <div class="buscar-presupuesto">
+
+            <input type="text"
+                   id="txtBuscar"
+                   class="form-control"
+                   placeholder="Buscar por categoría..."
+                   onkeyup="filtrarTarjetas()" />
+
         </div>
+
     </div>
 
-    <div class="row g-3" id="contenedorTarjetas">
-        @if (Model.ListaPresupuestos != null && Model.ListaPresupuestos.Any())
+
+    <!-- ========================= -->
+    <!-- CARDS -->
+    <!-- ========================= -->
+
+    <div class="row g-3"
+         id="contenedorTarjetas">
+
+        @if (Model.ListaPresupuestos != null &&
+                Model.ListaPresupuestos.Any())
         {
-            @foreach (var item in Model.ListaPresupuestos)
+
+            foreach (var item in Model.ListaPresupuestos)
             {
-                <div class="col-md-6 tarjeta-item" data-categoria="@(item.NombreCategoria?.ToLower() ?? "")">
-                    <div class="card p-3 border-0 shadow-sm rounded-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <h6 class="fw-bold mb-0">@item.NombreCategoria</h6>
-                            <span class="fw-bold text-primary">S/ @item.MontoLimite.ToString("N2")</span>
-                        </div>
-                        <small class="text-muted mb-2 d-block">@item.MesAnio</small>
 
-                        <div class="progress mb-2" style="height: 8px;">
-                            <div class="progress-bar bg-primary" role="progressbar" style="width: @item.PorcentajeUtilizado%"></div>
+                <div class="col-md-6 col-lg-4 tarjeta-item"
+                     data-categoria="@(item.NombreCategoria?.ToLower() ?? "")">
+
+                    <div class="presupuesto-card">
+
+                        <!-- CATEGORIA Y LIMITE -->
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <span class="categoria-nombre">
+                                @item.NombreCategoria
+                            </span>
+
+                            <span class="monto-limite">
+                                S/
+                                @item.MontoLimite.ToString("N2")
+                            </span>
+
                         </div>
 
-                        <div class="d-flex justify-content-between text-muted small">
-                            <span>Gastado: <strong class="text-danger">S/ @item.MontoGastado.ToString("N2")</strong></span>
-                            <span>Disponible: <strong class="text-success">S/ @item.Disponible.ToString("N2")</strong></span>
-                        </div>
-                        <small class="text-muted">@item.PorcentajeUtilizado.ToString("F1")% utilizado</small>
 
-                        <div class="text-end mt-2">
-                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarPresupuesto(@item.IdPresupuesto)">Eliminar</button>
+                        <!-- FECHAS -->
+
+                        <div class="mes-presupuesto mt-1 mb-3">
+
+                            <i class="bi bi-calendar3"></i>
+
+                            @item.FechaInicio.ToString("dd/MM/yyyy")
+                            -
+                            @item.FechaFin.ToString("dd/MM/yyyy")
+
                         </div>
+
+
+                        <!-- PROGRESO -->
+
+                        <div class="progress mb-2"
+                             style="height: 8px;">
+
+                            <div class="progress-bar bg-primary"
+                                 role="progressbar"
+                                 style="width: @Math.Min(item.PorcentajeUtilizado, 100)%">
+                            </div>
+
+                        </div>
+
+
+                        <!-- DATOS -->
+
+                        <div class="d-flex justify-content-between datos-presupuesto text-muted">
+
+                            <!-- GASTADO -->
+
+                            <span>
+
+                                Gastado:
+
+                                <strong class="text-danger">
+
+                                    S/
+                                    @item.MontoGastado.ToString("N2")
+
+                                </strong>
+
+                            </span>
+
+
+                            <!-- DISPONIBLE -->
+
+                            <span>
+
+                                Disponible:
+
+                                <strong class="text-success">
+
+                                    S/
+                                    @item.Disponible.ToString("N2")
+
+                                </strong>
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- PORCENTAJE -->
+
+                        <div class="mt-2">
+
+                            <small class="text-muted">
+
+                                @item.PorcentajeUtilizado.ToString("F1")%
+                                utilizado
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- BOTON ELIMINAR -->
+
+                        <div class="text-end mt-3">
+
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-danger btn-eliminar"
+                                    onclick="eliminarPresupuesto(@item.IdPresupuesto)">
+
+                                <i class="bi bi-trash"></i>
+                                Eliminar
+
+                            </button>
+
+                        </div>
+
                     </div>
+
                 </div>
+
             }
+
         }
         else
         {
-            <div class="col-12 text-center text-muted py-4">
-                <p>No se encontraron presupuestos registrados.</p>
+
+            <div class="col-12">
+
+                <div class="sin-presupuestos">
+
+                    <i class="bi bi-piggy-bank"
+                       style="font-size:35px;">
+                    </i>
+
+                    <p class="mt-3 mb-0">
+                        No se encontraron presupuestos registrados.
+                    </p>
+
+                </div>
+
             </div>
+
         }
+
     </div>
+
 </div>
 
-<script>
-    //  puerto  Program.cs (5298)
-    const API_URL = "http://localhost:5298/api/Presupuesto";
 
-    function guardarPresupuesto() {
-        const categoriaNombre = document.getElementById('cbCategoria').value;
-        const montoLimite = document.getElementById('txtMonto').value;
-        const mesAnio = document.getElementById('txtMes').value;
+@section Scripts {
 
-        if (!categoriaNombre) {
-            Swal.fire('Atención', 'Por favor selecciona una categoría.', 'warning');
-            return;
-        }
-        if (!montoLimite || parseFloat(montoLimite) <= 0) {
-            Swal.fire('Atención', 'Ingresa un monto válido mayor a 0.', 'warning');
-            return;
-        }
-        if (!mesAnio) {
-            Swal.fire('Atención', 'Selecciona el mes del presupuesto.', 'warning');
-            return;
-        }
+    <script>
 
-       
-        const nuevoPresupuesto = {
-            id: 0,
-            monto: parseFloat(montoLimite),
-            categoria: categoriaNombre,
-            fecha: mesAnio + "-01", // Formatea "YYYY-MM" a "YYYY-MM-01"
-            usuarioId: 1,
-            estado: 1
-        };
+        // =========================================================
+        // GUARDAR PRESUPUESTO
+        // =========================================================
 
-        fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(nuevoPresupuesto)
-        })
-        .then(response => {
-            if (response.ok) {
-                Swal.fire({
-                    title: '¡Registrado!',
-                    text: 'El presupuesto ha sido guardado con éxito.',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.reload();
+        async function guardarPresupuesto() {
+
+            const idCategoria =
+                document.getElementById("cbCategoria").value;
+
+            const montoLimite =
+                document.getElementById("txtMonto").value;
+
+            const montoGastado =
+                document.getElementById("txtMontoGastado").value;
+
+            const fechaInicio =
+                document.getElementById("txtFechaInicio").value;
+
+            const fechaFin =
+                document.getElementById("txtFechaFin").value;
+
+
+            // =========================
+            // VALIDAR CATEGORIA
+            // =========================
+
+            if (!idCategoria) {
+
+                Swal.fire(
+                    "Atención",
+                    "Selecciona una categoría.",
+                    "warning"
+                );
+
+                return;
+            }
+
+
+            // =========================
+            // VALIDAR MONTO LIMITE
+            // =========================
+
+            if (!montoLimite ||
+                parseFloat(montoLimite) <= 0) {
+
+                Swal.fire(
+                    "Atención",
+                    "Ingresa un monto límite válido mayor a 0.",
+                    "warning"
+                );
+
+                return;
+            }
+
+
+            // =========================
+            // VALIDAR MONTO GASTADO
+            // =========================
+
+            if (montoGastado === "" ||
+                parseFloat(montoGastado) < 0) {
+
+                Swal.fire(
+                    "Atención",
+                    "Ingresa un monto gastado válido.",
+                    "warning"
+                );
+
+                return;
+            }
+
+
+            // =========================
+            // GASTADO NO PUEDE SUPERAR LIMITE
+            // =========================
+
+            if (parseFloat(montoGastado) >
+                parseFloat(montoLimite)) {
+
+                Swal.fire(
+                    "Atención",
+                    "El monto gastado no puede ser mayor que el monto límite.",
+                    "warning"
+                );
+
+                return;
+            }
+
+
+            // =========================
+            // VALIDAR FECHA INICIO
+            // =========================
+
+            if (!fechaInicio) {
+
+                Swal.fire(
+                    "Atención",
+                    "Selecciona la fecha de inicio.",
+                    "warning"
+                );
+
+                return;
+            }
+
+
+            // =========================
+            // VALIDAR FECHA FIN
+            // =========================
+
+            if (!fechaFin) {
+
+                Swal.fire(
+                    "Atención",
+                    "Selecciona la fecha de fin.",
+                    "warning"
+                );
+
+                return;
+            }
+
+
+            // =========================
+            // VALIDAR FECHAS
+            // =========================
+
+            if (fechaFin < fechaInicio) {
+
+                Swal.fire(
+                    "Atención",
+                    "La fecha de fin no puede ser menor que la fecha de inicio.",
+                    "warning"
+                );
+
+                return;
+            }
+
+
+            // =====================================================
+            // OBJETO PARA LA API
+            // =====================================================
+
+            const nuevoPresupuesto = {
+
+                idUsuario: 1,
+
+                idCategoria: parseInt(idCategoria),
+
+                montoLimite: parseFloat(montoLimite),
+
+                montoGastado: parseFloat(montoGastado),
+
+                fechaInicio: fechaInicio,
+
+                fechaFin: fechaFin
+
+            };
+
+
+            console.log(
+                "DATOS ENVIADOS:",
+                nuevoPresupuesto
+            );
+
+
+            // =====================================================
+            // ENVIAR A LA WEB
+            // =====================================================
+
+            try {
+
+                const response = await fetch(
+                    "/Presupuesto/Registrar",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify(
+                            nuevoPresupuesto
+                        )
                     }
-                });
-            } else {
-                Swal.fire('Error', 'No se pudo guardar el presupuesto.', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire('Error', 'Ocurrió un fallo de conexión con la API.', 'error');
-        });
-    }
+                );
 
-    function eliminarPresupuesto(id) {
-        Swal.fire({
-            title: '¿Deseas eliminar este presupuesto?',
-            text: "Se aplicará una eliminación lógica.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch(`${API_URL}/${id}`, {
-                    method: 'DELETE'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        Swal.fire({
-                            title: 'Eliminado',
-                            text: 'El presupuesto fue desactivado.',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            window.location.reload();
-                        });
-                    } else {
-                        Swal.fire('Error', 'No se pudo eliminar el presupuesto.', 'error');
+
+                const resultado =
+                    await response.json();
+
+
+                console.log(
+                    "RESPUESTA:",
+                    resultado
+                );
+
+
+                if (resultado.success) {
+
+                    await Swal.fire({
+
+                        title: "¡Registrado!",
+
+                        text:
+                            "El presupuesto se registró correctamente.",
+
+                        icon: "success",
+
+                        confirmButtonText: "Aceptar"
+
+                    });
+
+                    window.location.reload();
+
+                }
+                else {
+
+                    Swal.fire({
+
+                        title: "Error",
+
+                        text:
+                            resultado.message ||
+                            "No se pudo registrar el presupuesto.",
+
+                        icon: "error"
+
+                    });
+
+                    console.error(
+                        resultado.detalle
+                    );
+
+                }
+
+            }
+            catch (error) {
+
+                console.error(
+                    "ERROR:",
+                    error
+                );
+
+                Swal.fire(
+                    "Error",
+                    "No se pudo conectar con la aplicación.",
+                    "error"
+                );
+
+            }
+
+        }
+
+
+        // =========================================================
+        // ELIMINAR PRESUPUESTO
+        // =========================================================
+
+        async function eliminarPresupuesto(id) {
+
+            const confirmacion =
+                await Swal.fire({
+
+                    title:
+                        "¿Deseas eliminar este presupuesto?",
+
+                    text:
+                        "Se realizará una eliminación lógica.",
+
+                    icon:
+                        "warning",
+
+                    showCancelButton:
+                        true,
+
+                    confirmButtonColor:
+                        "#d33",
+
+                    cancelButtonColor:
+                        "#3085d6",
+
+                    confirmButtonText:
+                        "Sí, eliminar",
+
+                    cancelButtonText:
+                        "Cancelar"
+
+                });
+
+
+            if (!confirmacion.isConfirmed) {
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/Presupuesto/Eliminar?id=${id}`,
+                        {
+                            method: "DELETE"
+                        }
+                    );
+
+
+                const resultado =
+                    await response.json();
+
+
+                if (resultado.success) {
+
+                    await Swal.fire({
+
+                        title:
+                            "Eliminado",
+
+                        text:
+                            "El presupuesto fue desactivado correctamente.",
+
+                        icon:
+                            "success",
+
+                        confirmButtonText:
+                            "Aceptar"
+
+                    });
+
+                    window.location.reload();
+
+                }
+                else {
+
+                    Swal.fire(
+                        "Error",
+                        resultado.message ||
+                        "No se pudo eliminar.",
+                        "error"
+                    );
+
+                }
+
+            }
+            catch (error) {
+
+                console.error(error);
+
+                Swal.fire(
+                    "Error",
+                    "No se pudo conectar con la aplicación.",
+                    "error"
+                );
+
+            }
+
+        }
+
+
+        // =========================================================
+        // BUSCAR POR CATEGORIA
+        // =========================================================
+
+        function filtrarTarjetas() {
+
+            const filtro =
+                document
+                    .getElementById("txtBuscar")
+                    .value
+                    .toLowerCase()
+                    .trim();
+
+
+            const tarjetas =
+                document.querySelectorAll(
+                    ".tarjeta-item"
+                );
+
+
+            tarjetas.forEach(
+                tarjeta => {
+
+                    const categoria =
+                        tarjeta.getAttribute(
+                            "data-categoria"
+                        );
+
+
+                    if (
+                        categoria.includes(filtro)
+                    ) {
+
+                        tarjeta.style.display = "";
+
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire('Error', 'Ocurrió un fallo de conexión con la API.', 'error');
-                });
-            }
-        });
-    }
+                    else {
 
-    function filtrarTarjetas() {
-        const filtro = document.getElementById('txtBuscar').value.toLowerCase();
-        const tarjetas = document.querySelectorAll('.tarjeta-item');
+                        tarjeta.style.display = "none";
 
-        tarjetas.forEach(t => {
-            const cat = t.getAttribute('data-categoria');
-            if (cat.includes(filtro)) {
-                t.style.display = '';
-            } else {
-                t.style.display = 'none';
-            }
-        });
-    }
-</script>
+                    }
+
+                }
+            );
+
+        }
+
+    </script>
+
+}
