@@ -70,13 +70,7 @@
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
         <div class="bd-form-group">
-            <label asp-for="IdUsuario"></label>
-            <input asp-for="IdUsuario" class="form-control" />
-            <span asp-validation-for="IdUsuario" class="text-danger"></span>
-        </div>
-
-        <div class="bd-form-group">
-            <label asp-for="IdCategoria"></label>
+            <label asp-for="IdCategoria">Categoria</label>
             <select asp-for="IdCategoria" class="form-select" asp-items="ViewBag.categorias">
                 <option value="">-- Seleccione una categoría --</option>
             </select>
@@ -84,10 +78,11 @@
         </div>
 
         <div class="bd-form-group">
-            <label asp-for="IdTipoMovimiento"></label>
+            <label asp-for="IdTipoMovimiento">Movimiento</label>
             <select asp-for="IdTipoMovimiento" class="form-select">
                 <option value="1">Ingreso</option>
                 <option value="2">Gasto</option>
+                <option value="2">Transferencia</option>
             </select>
             <span asp-validation-for="IdTipoMovimiento" class="text-danger"></span>
         </div>
