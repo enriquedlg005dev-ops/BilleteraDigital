@@ -21,7 +21,7 @@ namespace BilleteraDigital_Api.Services
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new SqlCommand("sp_ListarPresupuestos", connection))
+                using (var command = new SqlCommand("sp_Presupuesto_Listar", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     using (var reader = await command.ExecuteReaderAsync())
@@ -33,7 +33,9 @@ namespace BilleteraDigital_Api.Services
                                 Id = reader.GetInt32("Id"),
                                 Monto = reader.GetDecimal("Monto"),
                                 Categoria = reader.GetString("Categoria"),
-                                Fecha = reader.GetDateTime("Fecha"),
+                                InicioPresupuesto = reader.GetDateTime("InicioPresupuesto"),
+                                FinalPresupuesto = reader.GetDateTime("FinalPresupuesto"),
+                                UsuarioId = reader.GetInt32("UsuarioId"),
                                 Estado = reader.GetInt32("Estado")
                             });
                         }
@@ -50,7 +52,7 @@ namespace BilleteraDigital_Api.Services
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new SqlCommand("sp_ObtenerPresupuestoPorId", connection))
+                using (var command = new SqlCommand("sp_Presupuesto_ObtenerPorld", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@Id", id);
@@ -64,7 +66,9 @@ namespace BilleteraDigital_Api.Services
                                 Id = reader.GetInt32("Id"),
                                 Monto = reader.GetDecimal("Monto"),
                                 Categoria = reader.GetString("Categoria"),
-                                Fecha = reader.GetDateTime("Fecha"),
+                                InicioPresupuesto = reader.GetDateTime("InicioPresupuesto"),
+                                FinalPresupuesto = reader.GetDateTime("FinalPresupuesto"),
+                                UsuarioId = reader.GetInt32("UsuarioId"),
                                 Estado = reader.GetInt32("Estado")
                             };
                         }
@@ -79,12 +83,14 @@ namespace BilleteraDigital_Api.Services
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new SqlCommand("sp_InsertarPresupuesto", connection))
+                using (var command = new SqlCommand("sp_Presupuesto_Registrar", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@Monto", presupuesto.Monto);
                     command.Parameters.AddWithValue("@Categoria", presupuesto.Categoria);
-                    command.Parameters.AddWithValue("@Fecha", presupuesto.Fecha);
+                    command.Parameters.AddWithValue("@InicioPresupuesto", presupuesto.InicioPresupuesto);
+                    command.Parameters.AddWithValue("@FinalPresupuesto", presupuesto.FinalPresupuesto);
+                    command.Parameters.AddWithValue("@UsuarioId", presupuesto.UsuarioId);
 
                     int filasAfectadas = await command.ExecuteNonQueryAsync();
                     return filasAfectadas > 0;
@@ -97,12 +103,14 @@ namespace BilleteraDigital_Api.Services
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new SqlCommand("sp_ActualizarPresupuesto", connection))
+                using (var command = new SqlCommand("sp_Presupuesto_Editar", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@Id", presupuesto.Id);
                     command.Parameters.AddWithValue("@Monto", presupuesto.Monto);
                     command.Parameters.AddWithValue("@Categoria", presupuesto.Categoria);
+                    command.Parameters.AddWithValue("@InicioPresupuesto", presupuesto.InicioPresupuesto);
+                    command.Parameters.AddWithValue("@FinalPresupuesto", presupuesto.FinalPresupuesto);
 
                     int filasAfectadas = await command.ExecuteNonQueryAsync();
                     return filasAfectadas > 0;
@@ -115,7 +123,7 @@ namespace BilleteraDigital_Api.Services
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                using (var command = new SqlCommand("sp_EliminarPresupuestoLogico", connection))
+                using (var command = new SqlCommand("sp_Presupuesto_Eliminar", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@Id", id);
